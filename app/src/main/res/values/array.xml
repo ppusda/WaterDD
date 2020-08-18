@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="category">
+        <item>물</item>
+        <item>유제품</item>
+        <item>탄산음료</item>
+        <item>스포츠음료</item>
+        <item>주스</item>
+        <item>차</item>
+    </string-array>
+
+    <string-array name="water">
+        <item>물</item>
+    </string-array>
+
+    <string-array name="dairy">
+        <item>우유</item>
+        <item>요구르트</item>
+    </string-array>
+
+    <string-array name="carbonated">
+        <item>사이다</item>
+        <item>콜라</item>
+        <item>환타</item>
+        <item>탄산수</item>
+    </string-array>
+
+    <string-array name="sports">
+        <item>파워에이드</item>
+        <item>포카리스웨트</item>
+        <item>게토레이</item>
+    </string-array>
+
+    <string-array name="juice">
+        <item>오렌지주스</item>
+        <item>포도주스</item>
+        <item>사과주스</item>
+        <item>망고주스</item>
+    </string-array>
+
+    <string-array name="tea">
+        <item>녹차</item>
+        <item>보리차</item>
+        <item>홍차</item>
+        <item>커피</item>
+    </string-array>
+
+
+
+</resources>
