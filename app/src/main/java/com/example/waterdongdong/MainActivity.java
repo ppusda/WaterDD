@@ -5,34 +5,29 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
+import com.gelitenight.waveview.library.WaveView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
     ImageView img_setting;
     TextView txt_name, txt_temp, txt_intake;
+
+    private WaveHelper mWaveHelper;
+
+    private int mBorderColor = Color.parseColor("#FFFFFF");
+    private int mBorderWidth = 10;
+    private float Waterlevel = 0.5f; // 물의 높이
 
     private DatabaseReference mDatabase;
 
@@ -68,6 +63,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        final WaveView waveView = (WaveView) findViewById(R.id.wave);
+        waveView.setBorder(mBorderWidth, mBorderColor);
+        waveView.setWaveColor(Color.parseColor("#516de8"), Color.parseColor("#548dd1"));
+
+        mWaveHelper = new WaveHelper(waveView, Waterlevel);
+
     }
 
     private void readData(){
@@ -87,4 +88,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mWaveHelper.cancel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mWaveHelper.start();
+    }
+
 }
+
