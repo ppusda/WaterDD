@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         final WaveView waveView = (WaveView) findViewById(R.id.wave);
         waveView.setBorder(mBorderWidth, mBorderColor);
         waveView.setWaveColor(Color.parseColor("#516de8"), Color.parseColor("#548dd1")); // 물의 색과 투명도를 조절하는 옵션이다 ex #55548dd1
-        // 처음 두자리는 투명도에 관한 옵션이다. 그 뒤에는 알고있던 #hex 코드와 같다. - 투명도 표현을 위해 위에 코드를 투명도를 포함해 작성함 - 가장 물같은 색으로 바꿔주길 바람
+        // 처음 두자리는 투명도에 관한 옵션이다. 그 뒤에는 알고있던 #hex 코드와 같다. - 투명도 표현을 위해 위에 예시에 투명도를 포함해 작성함 - 가장 물같은 색으로 바꿔주길 바람
 
         mWaveHelper = new WaveHelper(waveView, Waterlevel);
     }
