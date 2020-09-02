@@ -10,6 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Setting_Activity"/>
+        <activity android:name=".Database_main"/>
         <activity android:name=".Select_PopupActivity" android:theme="@style/popupTheme"
             android:screenOrientation="fullSensor"/>
         <activity android:name=".MainActivity">

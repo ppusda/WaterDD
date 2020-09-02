@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView img_setting;
     TextView txt_name, txt_temp, txt_intake;
+    Button btn_db, btn_mod;
 
     private WaveHelper mWaveHelper;
 
@@ -51,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
         txt_temp = findViewById(R.id.txt_temp);
         txt_intake = findViewById(R.id.txt_intake);
 
+        btn_db = findViewById(R.id.btn_db);
+        btn_mod = findViewById(R.id.btn_mod);
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         readData();
@@ -58,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         img_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Select_PopupActivity.class);
+                Intent intent = new Intent(getApplicationContext(), Setting_Activity.class);
                 startActivityForResult(intent, 1);
             }
         });
@@ -69,6 +74,15 @@ public class MainActivity extends AppCompatActivity {
         // 처음 두자리는 투명도에 관한 옵션이다. 그 뒤에는 알고있던 #hex 코드와 같다. - 투명도 표현을 위해 위에 예시에 투명도를 포함해 작성함 - 가장 물같은 색으로 바꿔주길 바람
 
         mWaveHelper = new WaveHelper(waveView, Waterlevel);
+
+        btn_db.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(getApplicationContext(), Database_main.class);
+                startActivityForResult(it, 1);
+            }
+        });
+
     }
 
     private void readData(){
