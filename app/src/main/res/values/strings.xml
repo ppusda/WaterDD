@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">waterdongdong</string>
     <string name="title">물 마시는 습관</string>
+    <string name="btn_check">기록확인</string>
+    <string name="btn_setting">모드설정</string>
     <string name="t_text1">기능 설정</string>
     <string name="text1">알림 ON/OFF</string>
     <string name="text1_content">알림 기능을 키고 끕니다.</string>
