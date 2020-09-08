@@ -10,17 +10,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.IMarker;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FragDay extends Fragment {
     private View view;
+    //String[] xAxisLables = new String[]{"1","2", "3", "4" ...};
 
     public static FragDay newInstance(){
         FragDay fragDay = new FragDay();
@@ -43,22 +44,33 @@ public class FragDay extends Fragment {
         entries.add(new BarEntry(6f, 60f));
         BarDataSet set = new BarDataSet(entries, "BarDataSet");
 
-        ArrayList<String> labels = new ArrayList<String>();
-        labels.add("2001");
-        labels.add("2002");
-        labels.add("2003");
-        labels.add("2004");
-        labels.add("2005");
-        labels.add("2006");
-        labels.add("2007");
+
         BarData data = new BarData(set);
         data.setBarWidth(0.9f); // set custom bar width
         chart.setData(data);
         chart.setFitBars(true); // make the x-axis fit exactly all bars
+        set.setDrawValues(false); // 차트 위의 값 삭제
+        chart.setExtraTopOffset(20f); //차트와 위의 간격
         chart.invalidate(); // refresh
 
         MyMarkerView mv = new MyMarkerView(this.getActivity(),R.layout.my_marker_view);
         chart.setMarker(mv);
+
+        final ArrayList<String> xAxisLabel = new ArrayList<>();
+        xAxisLabel.add("Mon");
+        xAxisLabel.add("Tue");
+        xAxisLabel.add("Wed");
+        xAxisLabel.add("Thu");
+        xAxisLabel.add("Fri");
+        xAxisLabel.add("Sat");
+        xAxisLabel.add("Sun");
+
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
+        xAxis.setTextSize(15f);
+        //chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
+
 
         return view;
     }

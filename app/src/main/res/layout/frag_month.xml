@@ -8,11 +8,13 @@
         android:id="@+id/linearLayout"
         android:layout_width="412dp"
         android:layout_height="527dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/chart_background_gradient"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/chart_background_gradient">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/barchart"
