@@ -61,7 +61,7 @@ public class Select_PopupActivity extends AppCompatActivity {
         final Spinner sp_category = (Spinner)findViewById(R.id.sp_category);
         final Spinner sp_name = (Spinner)findViewById(R.id.sp_name);
         ed_name = findViewById(R.id.ed_name);
-        btn_confirm = findViewById(R.id.btn_confirm);
+        btn_confirm = findViewById(R.id.btn_b_confirm);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 

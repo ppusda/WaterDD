@@ -83,6 +83,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btn_mod.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(getApplicationContext(), SelectModActivity.class);
+                startActivityForResult(it, 1);
+            }
+        });
+
     }
 
     private void readData(){
