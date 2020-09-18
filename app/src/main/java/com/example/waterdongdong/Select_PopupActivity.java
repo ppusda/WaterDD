@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -55,13 +56,15 @@ public class Select_PopupActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_select__popup);
 
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         Rdb1 = findViewById(R.id.Rdb_sp_name);
         Rdb2 = findViewById(R.id.Rdb_ed_name);
 
         final Spinner sp_category = (Spinner)findViewById(R.id.sp_category);
         final Spinner sp_name = (Spinner)findViewById(R.id.sp_name);
         ed_name = findViewById(R.id.ed_name);
-        btn_confirm = findViewById(R.id.btn_confirm);
+        btn_confirm = findViewById(R.id.btn_b_confirm);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -82,16 +85,16 @@ public class Select_PopupActivity extends AppCompatActivity {
         sp_category.setAdapter(sc);
 
         sp_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                if(sc.getItem(position).equals("물")){
-                    sn = ArrayAdapter.createFromResource(Select_PopupActivity.this, R.array.water, R.layout.support_simple_spinner_dropdown_item);
-                    sn.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    chk_category = sc.getItem(position).toString();
-                    sp_name.setAdapter(sn);
+                            @Override
+                            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                                if(sc.getItem(position).equals("물")){
+                                    sn = ArrayAdapter.createFromResource(Select_PopupActivity.this, R.array.water, R.layout.support_simple_spinner_dropdown_item);
+                                    sn.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                    chk_category = sc.getItem(position).toString();
+                                    sp_name.setAdapter(sn);
 
-                    sp_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
+                                    sp_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                        @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                             chk_name = sn.getItem(position).toString();
                         }

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gelitenight.waveview.library.WaveView;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView img_setting;
     TextView txt_name, txt_temp, txt_intake;
     Button btn_db, btn_mod;
+
+    String chk_mod;
 
     private WaveHelper mWaveHelper;
 
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode==1){
             if(resultCode==RESULT_OK){
                 readData();
+                readMod();
             }
         }
     }
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         readData();
+        readMod();
 
         img_setting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +87,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(it, 1);
             }
         });
+        btn_mod.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "현재 모드 : " + chk_mod, Toast.LENGTH_SHORT).show();
+                Intent it = new Intent(getApplicationContext(), SelectModActivity.class);
+                startActivityForResult(it, 1);
+            }
+        });
 
     }
 
@@ -93,6 +106,21 @@ public class MainActivity extends AppCompatActivity {
                 txt_name.setText(data.getD_name());
                 txt_temp.setText(Integer.toString(data.getTemp()) + " C");
                 txt_intake.setText(Integer.toString(data.getIntake()) + " ml");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+    }
+
+    private void readMod(){
+        mDatabase.child("mod").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Mod mod = dataSnapshot.getValue(Mod.class);
+                chk_mod = mod.getMod();
             }
 
             @Override
