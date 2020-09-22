@@ -31,11 +31,12 @@
     </HorizontalScrollView>
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/drink_info"
         android:layout_width="match_parent"
         android:layout_height="98dp"
         android:background="#4edade"
-        android:text="TextView"
+        android:gravity="center_horizontal|center_vertical"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
