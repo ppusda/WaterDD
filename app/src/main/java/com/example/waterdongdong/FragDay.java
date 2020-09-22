@@ -42,6 +42,15 @@ public class FragDay extends Fragment {
         entries.add(new BarEntry(4f, 50f));
         entries.add(new BarEntry(5f, 70f));
         entries.add(new BarEntry(6f, 60f));
+        entries.add(new BarEntry(7f,20f));
+        entries.add(new BarEntry(8f, 30f));
+        entries.add(new BarEntry(9f, 80f));
+        entries.add(new BarEntry(10f, 60f));
+        entries.add(new BarEntry(11f, 50f));
+        entries.add(new BarEntry(12f, 50f));
+        entries.add(new BarEntry(13f, 70f));
+        entries.add(new BarEntry(14f, 60f));
+        entries.add(new BarEntry(15f,20f));
         BarDataSet set = new BarDataSet(entries, "BarDataSet");
 
 
@@ -65,10 +74,10 @@ public class FragDay extends Fragment {
         xAxisLabel.add("Sat");
         xAxisLabel.add("Sun");
 
-
         XAxis xAxis = chart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
         xAxis.setTextSize(15f);
+        xAxis.setDrawGridLines(false);
         //chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
 
 
