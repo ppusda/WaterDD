@@ -35,6 +35,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.firebase:firebase-analytics:17.4.4'
     implementation 'com.gelitenight.waveview:waveview:1.0.0'
+    implementation 'com.akexorcist:bluetoothspp:1.0.0'
 
     //뷰페이저
     implementation 'com.google.android.material:material:1.2.0-alpha01'

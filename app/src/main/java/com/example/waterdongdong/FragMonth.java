@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,16 +17,39 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FragMonth extends Fragment {
     private View view;
+    TextView drink_info;
+    //String[] xAxisLables = new String[]{"1","2", "3", "4" ...};
+    private DatabaseReference mDatabase;
 
     public static FragMonth newInstance(){
         FragMonth fragMonth = new FragMonth();
         return fragMonth;
+    }
+
+    private void readData(){
+        mDatabase.child("record").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Data data = dataSnapshot.getValue(Data.class);
+                drink_info.setText(data.getD_name());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
     }
 
     @Nullable
@@ -33,6 +57,8 @@ public class FragMonth extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.frag_month,container,false);
         BarChart chart = (BarChart) view.findViewById(R.id.barchart);
+        drink_info = (TextView)view.findViewById(R.id.drink_info);
+
         ArrayList NoOfEmp = new ArrayList();
 
         List<BarEntry> entries = new ArrayList<>();
@@ -69,6 +95,9 @@ public class FragMonth extends Fragment {
         XAxis xAxis = chart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
         xAxis.setTextSize(15f);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        readData();
 
         return view;
     }

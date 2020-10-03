@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,17 +16,39 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FragDay extends Fragment {
     private View view;
+    TextView drink_info;
     //String[] xAxisLables = new String[]{"1","2", "3", "4" ...};
+    private DatabaseReference mDatabase;
 
     public static FragDay newInstance(){
         FragDay fragDay = new FragDay();
         return fragDay;
+    }
+
+    private void readData(){
+        mDatabase.child("record").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Data data = dataSnapshot.getValue(Data.class);
+                drink_info.setText(data.getD_name());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
     }
 
     @Nullable
@@ -33,6 +56,7 @@ public class FragDay extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.frag_day,container,false);
         BarChart chart = (BarChart) view.findViewById(R.id.barchart);
+        drink_info = (TextView)view.findViewById(R.id.drink_info);
 
         List<BarEntry> entries = new ArrayList<>();
         entries.add(new BarEntry(0f, 30f));
@@ -42,6 +66,15 @@ public class FragDay extends Fragment {
         entries.add(new BarEntry(4f, 50f));
         entries.add(new BarEntry(5f, 70f));
         entries.add(new BarEntry(6f, 60f));
+        entries.add(new BarEntry(7f,20f));
+        entries.add(new BarEntry(8f, 30f));
+        entries.add(new BarEntry(9f, 80f));
+        entries.add(new BarEntry(10f, 60f));
+        entries.add(new BarEntry(11f, 50f));
+        entries.add(new BarEntry(12f, 50f));
+        entries.add(new BarEntry(13f, 70f));
+        entries.add(new BarEntry(14f, 60f));
+        entries.add(new BarEntry(15f,20f));
         BarDataSet set = new BarDataSet(entries, "BarDataSet");
 
 
@@ -65,12 +98,14 @@ public class FragDay extends Fragment {
         xAxisLabel.add("Sat");
         xAxisLabel.add("Sun");
 
-
         XAxis xAxis = chart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
         xAxis.setTextSize(15f);
+        xAxis.setDrawGridLines(false);
         //chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        readData();
 
         return view;
     }
