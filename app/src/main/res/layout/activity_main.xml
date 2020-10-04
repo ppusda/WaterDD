@@ -58,14 +58,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="연결" />
+                    android:text="연결"
+                    android:backgroundTint="#fff"/>
 
                 <Button
                     android:id="@+id/btnSend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="보내기" />
+                    android:text="보내기"
+                    android:backgroundTint="#fff"/>
             </LinearLayout>
 
             <FrameLayout
