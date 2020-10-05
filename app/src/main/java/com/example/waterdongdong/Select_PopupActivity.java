@@ -87,6 +87,7 @@ public class Select_PopupActivity extends AppCompatActivity {
         sp_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
                             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                                ((TextView)adapterView.getChildAt(0)).setTextColor(Color.BLACK);
                                 if(sc.getItem(position).equals("물")){
                                     sn = ArrayAdapter.createFromResource(Select_PopupActivity.this, R.array.water, R.layout.support_simple_spinner_dropdown_item);
                                     sn.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -96,6 +97,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                                     sp_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            ((TextView)parent.getChildAt(0)).setTextColor(Color.BLACK);
                             chk_name = sn.getItem(position).toString();
                         }
                         @Override
@@ -112,6 +114,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                     sp_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            ((TextView)parent.getChildAt(0)).setTextColor(Color.BLACK);
                             chk_name = sn.getItem(position).toString();
                         }
                         @Override
@@ -128,6 +131,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                     sp_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            ((TextView)parent.getChildAt(0)).setTextColor(Color.BLACK);
                             chk_name = sn.getItem(position).toString();
                         }
                         @Override
@@ -144,6 +148,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                     sp_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            ((TextView)parent.getChildAt(0)).setTextColor(Color.BLACK);
                             chk_name = sn.getItem(position).toString();
                         }
                         @Override
@@ -160,6 +165,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                     sp_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            ((TextView)parent.getChildAt(0)).setTextColor(Color.BLACK);
                             chk_name = sn.getItem(position).toString();
                         }
                         @Override
@@ -176,6 +182,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                     sp_name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            ((TextView)parent.getChildAt(0)).setTextColor(Color.BLACK);
                             chk_name = sn.getItem(position).toString();
                         }
                         @Override
