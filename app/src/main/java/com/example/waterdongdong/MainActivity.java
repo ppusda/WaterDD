@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,6 +23,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import app.akexorcist.bluetotohspp.library.BluetoothSPP;
 import app.akexorcist.bluetotohspp.library.BluetoothState;
 import app.akexorcist.bluetotohspp.library.DeviceList;
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     Button btn_db, btn_mod;
 
     String chk_mod;
+    float goal_intake = (170+60)/100; // (키+몸무게)/100ml 임시로 만듬 (키,몸무게 받는곳에서 intent로 받아야할듯
+    int my_intake = 0, bf_intake = 0, now_intake = 0;
 
     private WaveHelper mWaveHelper;
 
@@ -41,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private float Waterlevel = 0.5f; // 물의 높이
 
     private DatabaseReference mDatabase;
-
     private BluetoothSPP bt;
 
     @Override
@@ -102,10 +107,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    static int counter = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        TimerTask tt = new TimerTask() {
+            @Override
+            public void run() {
+                my_intake = 0;
+            }
+        }; // 하루마다 달성한 값을 초기화 시켜주기위한 코드
 
         /////블루투스
         bt = new BluetoothSPP(this); //Initializing
@@ -124,9 +138,17 @@ public class MainActivity extends AppCompatActivity {
 
                 String[] array=message.split(",");
 
-                temp.setText(array[0].concat("C"));
-                intake.setText(array[1].concat("ml"));
+                now_intake =  Integer.parseInt(array[1]);
 
+                if(now_intake != 0){
+                    my_intake += (bf_intake - now_intake);
+                }
+
+                intake.setText(my_intake + " ml/" + (int)goal_intake + " L");
+                temp.setText(array[0].concat("C"));
+
+                bf_intake = now_intake;
+                now_intake = 0;
             }
         });
 
@@ -161,6 +183,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ////
+
+        Timer timer = new Timer();
+        timer.schedule(tt, 0, 1000*60*60*24); // 하루마다 위에 일을 실행한다.
 
         img_setting = findViewById(R.id.Img_setting);
         txt_name = findViewById(R.id.txt_name);
@@ -214,8 +239,8 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Data data = dataSnapshot.getValue(Data.class);
                 txt_name.setText(data.getD_name());
-                txt_temp.setText(Integer.toString(data.getTemp()) + " C");
-                txt_intake.setText(Integer.toString(data.getIntake()) + " ml");
+                //txt_temp.setText(Integer.toString(data.getTemp()) + " C"); // 온도
+                //txt_intake.setText(now_intake + " ml/" + (int)my_intake + " L"); // 음수량(?)
             }
 
             @Override

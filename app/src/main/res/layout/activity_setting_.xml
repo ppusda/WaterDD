@@ -83,13 +83,14 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text1"
                     android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/text1_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
+                    android:textSize="10sp"
                     android:text="@string/text1_content" />
 
             </LinearLayout>
@@ -125,13 +126,14 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text2"
                     android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/text2_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
+                    android:textSize="10sp"
                     android:text="@string/text2_content" />
 
             </LinearLayout>
@@ -162,13 +164,14 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text3"
                     android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/text3_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
+                    android:textSize="10sp"
                     android:text="@string/text3_content" />
 
             </LinearLayout>
@@ -204,13 +207,14 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text4"
                     android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/text4_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
+                    android:textSize="10sp"
                     android:text="@string/text4_content" />
 
             </LinearLayout>
@@ -246,13 +250,14 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text5"
                     android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/text5_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
+                    android:textSize="10sp"
                     android:text="@string/text5_content" />
 
             </LinearLayout>
@@ -283,13 +288,14 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text6"
                     android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/text6_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
+                    android:textSize="10sp"
                     android:text="@string/text6_content" />
 
             </LinearLayout>
