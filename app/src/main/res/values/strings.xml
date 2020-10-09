@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">waterdongdong</string>
+    <string name="app_name">물 마시는 습관</string>
     <string name="title">물 마시는 습관</string>
     <string name="btn_check">기록확인</string>
     <string name="btn_setting">모드설정</string>

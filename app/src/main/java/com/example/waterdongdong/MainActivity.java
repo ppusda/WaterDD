@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     Button btn_db, btn_mod;
 
     String chk_mod;
-    float goal_intake = (170+60)/100; // (키+몸무게)/100ml 임시로 만듬 (키,몸무게 받는곳에서 intent로 받아야할듯
+    float goal_intake = 0;
     int my_intake = 0, bf_intake = 0, now_intake = 0;
 
     private WaveHelper mWaveHelper;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
             if(resultCode==RESULT_OK){
                 readData();
                 readMod();
+                readUser();
             }
         }
         if (requestCode == BluetoothState.REQUEST_CONNECT_DEVICE) { /////블루투스
@@ -134,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() { //데이터 수신
             TextView temp = findViewById(R.id.txt_temp);
             TextView intake = findViewById(R.id.txt_intake);
+            @SuppressLint("SetTextI18n")
             public void onDataReceived(byte[] data, String message) {
 
                 String[] array=message.split(",");
@@ -144,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                     my_intake += (bf_intake - now_intake);
                 }
 
-                intake.setText(my_intake + " ml/" + (int)goal_intake + " L");
+                intake.setText(my_intake + " ml/" + (goal_intake/1000) + " L");
                 temp.setText(array[0].concat("C"));
 
                 bf_intake = now_intake;
@@ -199,10 +202,11 @@ public class MainActivity extends AppCompatActivity {
 
         readData();
         readMod();
+        readUser();
 
-        img_setting.setOnClickListener(new View.OnClickListener() {
+        img_setting.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), Setting_Activity.class);
                 startActivityForResult(intent, 1);
             }
@@ -215,22 +219,21 @@ public class MainActivity extends AppCompatActivity {
 
         mWaveHelper = new WaveHelper(waveView, Waterlevel);
 
-        btn_db.setOnClickListener(new View.OnClickListener() {
+        btn_db.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 Intent it = new Intent(getApplicationContext(), Database_main.class);
                 startActivityForResult(it, 1);
             }
         });
-        btn_mod.setOnClickListener(new View.OnClickListener() {
+        btn_mod.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 Toast.makeText(getApplicationContext(), "현재 모드 : " + chk_mod, Toast.LENGTH_SHORT).show();
                 Intent it = new Intent(getApplicationContext(), SelectModActivity.class);
                 startActivityForResult(it, 1);
             }
         });
-
     }
 
     private void readData(){
@@ -256,6 +259,21 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Mod mod = dataSnapshot.getValue(Mod.class);
                 chk_mod = mod.getMod();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+    }
+
+    private void readUser(){
+        mDatabase.child("user_info").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                goal_intake = user.getGoal_intake();
             }
 
             @Override

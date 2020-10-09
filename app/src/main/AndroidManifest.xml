@@ -22,10 +22,6 @@
             android:theme="@style/popupTheme" />
         <activity android:name=".Setting_Activity" />
         <activity android:name=".Database_main" />
-        <activity
-            android:name=".Select_PopupActivity"
-            android:screenOrientation="fullSensor"
-            android:theme="@style/popupTheme" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

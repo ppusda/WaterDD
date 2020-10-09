@@ -15,57 +15,78 @@
         android:orientation="horizontal">
 
         <TextView
-
             android:layout_width="match_parent"
-            android:layout_height="53dp"
+            android:layout_height="55dp"
             android:background="@drawable/round_up"
             android:gravity="center"
             android:text="어플 정보"
             android:textColor="#fff"
             android:textSize="20sp" />
     </LinearLayout>
-    <!-- //end 타이틀바 -->
 
-    <!-- Notice -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="10dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_gravity="center">
 
             <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="wrap_content"
+                android:id="@+id/img_icon"
+                android:layout_width="150dp"
                 android:layout_height="150dp"
-                app:srcCompat="@drawable/app_icon" />
+                app:srcCompat="@drawable/app_icon"
+                android:scaleType="fitXY"
+                android:layout_gravity="center"/>
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/txt_app_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="물 마시는 습관" />
+                android:text="물 마시는 습관"
+                android:textColor="#666"/>
 
             <TextView
-                android:id="@+id/textView10"
+                android:id="@+id/txt_app_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="2020 워터동동 제작" />
+                android:text="2020 워터동동 제작"
+                android:textColor="#666"/>
+
+            <TextView
+                android:id="@+id/txt_now_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:gravity="center"
+                android:text="현재 버전 : "
+                android:textColor="#333"/>
+
+            <TextView
+                android:id="@+id/txt_recent_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="최신 버전 : "
+                android:gravity="center"
+                android:textColor="#548dd1"/>
+
         </LinearLayout>
+
     </LinearLayout>
 
     <View
         android:background="#66bdbdbd"
         android:layout_width="match_parent"
         android:layout_height="1dp" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,15 +95,15 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_confirm"
+            android:id="@+id/btn_info_confirm"
             android:layout_width="match_parent"
-            android:layout_height="53dp"
+            android:layout_height="55dp"
             android:background="@drawable/round_down"
             android:gravity="center"
-            android:padding="16dp"
+            android:padding="10dp"
             android:text="확인"
             android:textColor="#548dd1"
             android:textSize="15sp" />
     </LinearLayout>
-    <!--// 닫기 버튼 -->
+
 </LinearLayout>
