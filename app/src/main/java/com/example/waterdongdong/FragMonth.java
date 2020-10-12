@@ -28,9 +28,10 @@ import java.util.List;
 
 public class FragMonth extends Fragment {
     private View view;
-    TextView drink_info;
+    TextView drink_name, drink_intake;
     //String[] xAxisLables = new String[]{"1","2", "3", "4" ...};
     private DatabaseReference mDatabase;
+    String chk_mod;
 
     public static FragMonth newInstance(){
         FragMonth fragMonth = new FragMonth();
@@ -42,7 +43,22 @@ public class FragMonth extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Data data = dataSnapshot.getValue(Data.class);
-                drink_info.setText(data.getD_name());
+                drink_name.setText(data.getD_name());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+    }
+
+    private void readMod(){
+        mDatabase.child("mod").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Mod mod = dataSnapshot.getValue(Mod.class);
+                chk_mod = mod.getMod();
             }
 
             @Override
@@ -57,7 +73,8 @@ public class FragMonth extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.frag_month,container,false);
         BarChart chart = (BarChart) view.findViewById(R.id.barchart);
-        drink_info = (TextView)view.findViewById(R.id.drink_info);
+        drink_name = (TextView)view.findViewById(R.id.drink_name);
+        drink_intake = (TextView) view.findViewById(R.id.drink_intake);
 
         ArrayList NoOfEmp = new ArrayList();
 
@@ -82,22 +99,25 @@ public class FragMonth extends Fragment {
         MyMarkerView mv = new MyMarkerView(this.getActivity(),R.layout.my_marker_view);
         chart.setMarker(mv);
 
-        final ArrayList<String> xAxisLabel = new ArrayList<>();
-        xAxisLabel.add("Mon");
-        xAxisLabel.add("Tue");
-        xAxisLabel.add("Wed");
-        xAxisLabel.add("Thu");
-        xAxisLabel.add("Fri");
-        xAxisLabel.add("Sat");
-        xAxisLabel.add("Sun");
+//        final ArrayList<String> xAxisLabel = new ArrayList<>();
+//        xAxisLabel.add("Mon");
+//        xAxisLabel.add("Tue");
+//        xAxisLabel.add("Wed");
+//        xAxisLabel.add("Thu");
+//        xAxisLabel.add("Fri");
+//        xAxisLabel.add("Sat");
+//        xAxisLabel.add("Sun");
 
 
         XAxis xAxis = chart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
+        //xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
         xAxis.setTextSize(15f);
+        xAxis.setCenterAxisLabels(false);
+        xAxis.setGranularity(1f);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         readData();
+        readMod();
 
         return view;
     }

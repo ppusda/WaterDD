@@ -16,6 +16,7 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,9 +28,10 @@ import java.util.List;
 
 public class FragDay extends Fragment {
     private View view;
-    TextView drink_info;
+    TextView drink_name, drink_intake;
     //String[] xAxisLables = new String[]{"1","2", "3", "4" ...};
     private DatabaseReference mDatabase;
+    String chk_mod;
 
     public static FragDay newInstance(){
         FragDay fragDay = new FragDay();
@@ -41,7 +43,22 @@ public class FragDay extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Data data = dataSnapshot.getValue(Data.class);
-                drink_info.setText(data.getD_name());
+                drink_name.setText(data.getD_name());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+    }
+
+    private void readMod(){
+        mDatabase.child("mod").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Mod mod = dataSnapshot.getValue(Mod.class);
+                chk_mod = mod.getMod();
             }
 
             @Override
@@ -54,9 +71,12 @@ public class FragDay extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.frag_day,container,false);
+        view = inflater.inflate(R.layout.frag_month,container,false);
         BarChart chart = (BarChart) view.findViewById(R.id.barchart);
-        drink_info = (TextView)view.findViewById(R.id.drink_info);
+        drink_name = (TextView)view.findViewById(R.id.drink_name);
+        drink_intake = (TextView) view.findViewById(R.id.drink_intake);
+
+        ArrayList NoOfEmp = new ArrayList();
 
         List<BarEntry> entries = new ArrayList<>();
         entries.add(new BarEntry(0f, 30f));
@@ -66,17 +86,7 @@ public class FragDay extends Fragment {
         entries.add(new BarEntry(4f, 50f));
         entries.add(new BarEntry(5f, 70f));
         entries.add(new BarEntry(6f, 60f));
-        entries.add(new BarEntry(7f,20f));
-        entries.add(new BarEntry(8f, 30f));
-        entries.add(new BarEntry(9f, 80f));
-        entries.add(new BarEntry(10f, 60f));
-        entries.add(new BarEntry(11f, 50f));
-        entries.add(new BarEntry(12f, 50f));
-        entries.add(new BarEntry(13f, 70f));
-        entries.add(new BarEntry(14f, 60f));
-        entries.add(new BarEntry(15f,20f));
         BarDataSet set = new BarDataSet(entries, "BarDataSet");
-
 
         BarData data = new BarData(set);
         data.setBarWidth(0.9f); // set custom bar width
@@ -89,23 +99,25 @@ public class FragDay extends Fragment {
         MyMarkerView mv = new MyMarkerView(this.getActivity(),R.layout.my_marker_view);
         chart.setMarker(mv);
 
-        final ArrayList<String> xAxisLabel = new ArrayList<>();
-        xAxisLabel.add("Mon");
-        xAxisLabel.add("Tue");
-        xAxisLabel.add("Wed");
-        xAxisLabel.add("Thu");
-        xAxisLabel.add("Fri");
-        xAxisLabel.add("Sat");
-        xAxisLabel.add("Sun");
+//        final ArrayList<String> xAxisLabel = new ArrayList<>();
+//        xAxisLabel.add("Mon");
+//        xAxisLabel.add("Tue");
+//        xAxisLabel.add("Wed");
+//        xAxisLabel.add("Thu");
+//        xAxisLabel.add("Fri");
+//        xAxisLabel.add("Sat");
+//        xAxisLabel.add("Sun");
+
 
         XAxis xAxis = chart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
+        //xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
         xAxis.setTextSize(15f);
-        xAxis.setDrawGridLines(false);
-        //chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
+        xAxis.setCenterAxisLabels(false);
+        xAxis.setGranularity(1f);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         readData();
+        readMod();
 
         return view;
     }

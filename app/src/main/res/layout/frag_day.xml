@@ -31,17 +31,32 @@
 
     </HorizontalScrollView>
 
-    <TextView
-        android:id="@+id/drink_info"
-        android:layout_width="match_parent"
-        android:layout_height="98dp"
-        android:background="#4edade"
-        android:gravity="center_horizontal|center_vertical"
-        android:textSize="24sp"
+    <LinearLayout
+        android:layout_width="416dp"
+        android:layout_height="112dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView">
+
+        <TextView
+            android:id="@+id/drink_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#4edade"
+            android:gravity="center_horizontal|center_vertical"
+            android:textSize="19sp" />
+
+        <TextView
+            android:id="@+id/drink_intake"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#4edade"
+            android:gravity="center_horizontal|center_vertical"
+            android:textSize="19sp" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
