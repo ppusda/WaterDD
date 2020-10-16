@@ -77,38 +77,45 @@ public class FragWeek extends Fragment {
         drink_intake = (TextView) view.findViewById(R.id.drink_intake);
 
         List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0f, 30f));
         entries.add(new BarEntry(1f, 80f));
         entries.add(new BarEntry(2f, 60f));
         entries.add(new BarEntry(3f, 50f));
         entries.add(new BarEntry(4f, 50f));
         entries.add(new BarEntry(5f, 70f));
         entries.add(new BarEntry(6f, 60f));
-        BarDataSet set = new BarDataSet(entries, "BarDataSet");
+        entries.add(new BarEntry(7f, 30f));
+        BarDataSet set = new BarDataSet(entries, "일 음수량(ml)");
 
         BarData data = new BarData(set);
-        data.setBarWidth(0.9f); // set custom bar width
+        data.setBarWidth(0.8f); // set custom bar width
         chart.setData(data);
         chart.setFitBars(true); // make the x-axis fit exactly all bars
         set.setDrawValues(false); // 차트 위의 값 삭제
         chart.setExtraTopOffset(20f); //차트와 위의 간격
+
+        XAxis x = chart.getXAxis();
+        x.setAxisMinimum(0);
+        x.setAxisMaximum(8);
+
         chart.invalidate(); // refresh
 
         MyMarkerView mv = new MyMarkerView(this.getActivity(),R.layout.my_marker_view);
         chart.setMarker(mv);
 
-//        final ArrayList<String> xAxisLabel = new ArrayList<>();
-//        xAxisLabel.add("Mon");
-//        xAxisLabel.add("Tue");
-//        xAxisLabel.add("Wed");
-//        xAxisLabel.add("Thu");
-//        xAxisLabel.add("Fri");
-//        xAxisLabel.add("Sat");
-//        xAxisLabel.add("Sun");
+     final ArrayList<String> xAxisLabel = new ArrayList<>();
+      xAxisLabel.add("");
+      xAxisLabel.add("Mon");
+      xAxisLabel.add("Tue");
+      xAxisLabel.add("Wed");
+      xAxisLabel.add("Thu");
+      xAxisLabel.add("Fri");
+      xAxisLabel.add("Sat");
+      xAxisLabel.add("Sun");
+      xAxisLabel.add("");
 
 
         XAxis xAxis = chart.getXAxis();
-        //xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
         xAxis.setTextSize(15f);
         xAxis.setCenterAxisLabels(false);
         xAxis.setGranularity(1f);
