@@ -6,7 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +28,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,7 +47,12 @@ public class MainActivity extends AppCompatActivity {
 
     String chk_mod;
     float goal_intake = 0;
-    int my_intake = 0, bf_intake = 0, now_intake = 0;
+    int bf_intake = 0, now_intake = 0;
+    static int my_intake = 0;
+
+    String date, time, weekDay;
+    int cal = 100;
+    int tot_cal;
 
     private WaveHelper mWaveHelper;
 
@@ -51,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothSPP bt;
 
     @Override
-
     /////////블루투스
     public void onDestroy() {
         super.onDestroy();
@@ -109,19 +121,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    static int counter = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        TimerTask tt = new TimerTask() {
-            @Override
-            public void run() {
-                my_intake = 0;
-            }
-        }; // 하루마다 달성한 값을 초기화 시켜주기위한 코드
 
         /////블루투스
         bt = new BluetoothSPP(this); //Initializing
@@ -133,6 +136,13 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
+        final WaveView waveView = (WaveView) findViewById(R.id.wave);
+
+        Date currentTime = Calendar.getInstance().getTime();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        date = dateFormat.format(currentTime);
+
         bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() { //데이터 수신
             TextView temp = findViewById(R.id.txt_temp);
             TextView intake = findViewById(R.id.txt_intake);
@@ -143,10 +153,28 @@ public class MainActivity extends AppCompatActivity {
 
                 now_intake =  Integer.parseInt(array[1]);
 
+                if(bf_intake == 0 || now_intake != 0){
+                    Intent q_pop_in = new Intent(getApplicationContext(), Select_PopupActivity.class);
+                    q_pop_in.putExtra("tot_cal", tot_cal);
+                    startActivityForResult(q_pop_in, 1);
+                }// 만약 전의 물의 양이 0 이고 현재의 양이 0이 아니라면 (= 물이 들어왔을 때) 질문화면 팝업 창을 띄워준다.
+
                 if(now_intake != 0){
-                    my_intake += (bf_intake - now_intake);
+                    if(bf_intake != 0){
+                        my_intake += (bf_intake - now_intake);
+                        tot_cal = cal * my_intake;
+                    }
+                } // 현재 물의 양과 전의 물의 양을 비교하여 내가 현재 마신 물의 양을 구한다.
+
+                if (my_intake == 0) {
+                    Waterlevel = 0.0f;
+                }else{
+                    float chk_intake =  my_intake/goal_intake;
+                    String bs = String.format("%.1f", chk_intake);
+                    Waterlevel = Float.parseFloat(bs);
                 }
 
+                setWaterView(waveView, Waterlevel);
                 intake.setText(my_intake + " ml/" + (goal_intake/1000) + " L");
                 temp.setText(array[0].concat("C"));
 
@@ -185,11 +213,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ////
-
-        Timer timer = new Timer();
-        timer.schedule(tt, 0, 1000*60*60*24); // 하루마다 위에 일을 실행한다.
-
         img_setting = findViewById(R.id.Img_setting);
         txt_name = findViewById(R.id.txt_name);
         txt_temp = findViewById(R.id.txt_temp);
@@ -212,12 +235,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final WaveView waveView = (WaveView) findViewById(R.id.wave);
-        waveView.setBorder(mBorderWidth, mBorderColor);
-        waveView.setWaveColor(Color.parseColor("#516de8"), Color.parseColor("#548dd1")); // 물의 색과 투명도를 조절하는 옵션이다 ex #55548dd1
-        // 처음 두자리는 투명도에 관한 옵션이다. 그 뒤에는 알고있던 #hex 코드와 같다. - 투명도 표현을 위해 위에 예시에 투명도를 포함해 작성함 - 가장 물같은 색으로 바꿔주길 바람
-
-        mWaveHelper = new WaveHelper(waveView, Waterlevel);
+        setWaterView(waveView, Waterlevel);
 
         btn_db.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -236,14 +254,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void setWaterView(WaveView waveView, float level){ // waterview를 설정하는 메소드
+        waveView.setBorder(mBorderWidth, mBorderColor);
+        waveView.setWaveColor(Color.parseColor("#516de8"), Color.parseColor("#548dd1")); // 물의 색과 투명도를 조절하는 옵션이다 ex #55548dd1
+        // 처음 두자리는 투명도에 관한 옵션이다. 그 뒤에는 알고있던 #hex 코드와 같다. - 투명도 표현을 위해 위에 예시에 투명도를 포함해 작성함 - 가장 물같은 색으로 바꿔주길 바람
+
+        mWaveHelper = new WaveHelper(waveView, Waterlevel);
+    }
+
     private void readData(){
-        mDatabase.child("record").addValueEventListener(new ValueEventListener() {
+        mDatabase.child("record").child(date).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Data data = dataSnapshot.getValue(Data.class);
                 txt_name.setText(data.getD_name());
-                //txt_temp.setText(Integer.toString(data.getTemp()) + " C"); // 온도
-                //txt_intake.setText(now_intake + " ml/" + (int)my_intake + " L"); // 음수량(?)
             }
 
             @Override
@@ -296,4 +320,3 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-

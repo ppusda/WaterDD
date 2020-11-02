@@ -1,6 +1,7 @@
 package com.example.waterdongdong;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.PopupWindowCompat;
 
@@ -11,6 +12,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -32,8 +34,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
+
+import app.akexorcist.bluetotohspp.library.BluetoothState;
 
 public class Select_PopupActivity extends AppCompatActivity {
 
@@ -45,6 +53,9 @@ public class Select_PopupActivity extends AppCompatActivity {
     String chk_category;
     String chk_name;
     int chk_ed = 1;
+
+    String date, time, weekDay;
+    int tot_cal;
 
     private DatabaseReference mDatabase;
 
@@ -67,6 +78,16 @@ public class Select_PopupActivity extends AppCompatActivity {
         btn_confirm = findViewById(R.id.btn_b_confirm);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        Date currentTime = Calendar.getInstance().getTime();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat weekdayFormat = new SimpleDateFormat("EE", Locale.getDefault());
+
+        date = dateFormat.format(currentTime);
+        time = timeFormat.format(currentTime);
+        weekDay = weekdayFormat.format(currentTime);
 
         Rdb1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -218,17 +239,17 @@ public class Select_PopupActivity extends AppCompatActivity {
                     chk_name = ed_name.getText().toString();
                 }
 
-                writeRecord(chk_category, chk_name, 26, 300);
+                writeRecord(chk_category, chk_name, tot_cal, time, weekDay);
 
                 finish();
             }
         });
     }
 
-    private void writeRecord(String category, String name, int temp, int intake){
-        Data data = new Data(category, name, temp, intake);
+    private void writeRecord(String category, String name, int cal, String time, String weekDay){
+        Data data = new Data(category, name, cal, time, weekDay);
 
-        mDatabase.child("record").setValue(data)
+        mDatabase.child("record").child(date).setValue(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -253,3 +274,4 @@ public class Select_PopupActivity extends AppCompatActivity {
     }
 
 }
+

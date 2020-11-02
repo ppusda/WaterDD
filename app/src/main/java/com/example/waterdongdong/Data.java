@@ -4,18 +4,20 @@ public class Data {
 
     public String category;
     public String d_name;
-    public int temp;
-    public int intake;
+    public int cal;
+    public String time;
+    public String weekDay;
 
     public Data(){
 
     }
 
-    public Data(String category, String d_name, int temp, int intake) {
+    public Data(String category, String d_name, int cal, String time, String weekDay) {
         this.category = category;
         this.d_name = d_name;
-        this.temp = temp;
-        this.intake = intake;
+        this.cal = cal;
+        this.time = time;
+        this.weekDay = weekDay;
     }
 
     public String getCategory() {
@@ -34,20 +36,28 @@ public class Data {
         this.d_name = d_name;
     }
 
-    public int getTemp() {
-        return temp;
+    public int getCal() {
+        return cal;
     }
 
-    public void setTemp(int temp) {
-        this.temp = temp;
+    public void setCal(int cal) {
+        this.cal = cal;
     }
 
-    public int getIntake() {
-        return intake;
+    public String getTime() {
+        return time;
     }
 
-    public void setIntake(int intake) {
-        this.intake = intake;
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getWeekDay() {
+        return weekDay;
+    }
+
+    public void setWeekDay(String weekDay) {
+        this.weekDay = weekDay;
     }
 
     @Override
@@ -55,8 +65,6 @@ public class Data {
         return "Data{" +
                 "catagory='" + category + '\'' +
                 ", d_name='" + d_name + '\'' +
-                ", temp='" + temp + '\'' +
-                ", intake='" + intake + '\'' +
                 '}';
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="350dp"
+    android:layout_width="345dp"
     android:layout_height="wrap_content"
     android:background="#00C32424"
     android:orientation="vertical">
@@ -18,7 +18,7 @@
             android:gravity="center"
             android:text="음료 설정"
             android:textColor="#fff"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
     </LinearLayout>
     <!-- //end 타이틀바 -->
 
@@ -171,7 +171,7 @@
         <Button
             android:id="@+id/btn_b_confirm"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
             android:background="@drawable/round_down"
             android:gravity="center"
             android:padding="10dp"
