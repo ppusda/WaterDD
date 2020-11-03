@@ -11,10 +11,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.database.DataSnapshot;
@@ -23,8 +26,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class FragDay extends Fragment {
     private View view;
@@ -80,15 +88,16 @@ public class FragDay extends Fragment {
         ArrayList NoOfEmp = new ArrayList();
 
         List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0f, 30f));
-        entries.add(new BarEntry(1f, 80f));
-        entries.add(new BarEntry(2f, 60f));
-        entries.add(new BarEntry(3f, 50f));
-        entries.add(new BarEntry(4f, 50f));
-        entries.add(new BarEntry(5f, 70f));
-        entries.add(new BarEntry(6f, 60f));
-        entries.add(new BarEntry(7f, 70f));
-        entries.add(new BarEntry(8f, 60f));
+        entries.add(new BarEntry(0f, 0f));
+        entries.add(new BarEntry(1f, 1250f));
+        entries.add(new BarEntry(2f, 2200f));
+        entries.add(new BarEntry(3f, 1500f));
+        entries.add(new BarEntry(4f, 1300f));
+        entries.add(new BarEntry(5f, 1300f));
+        entries.add(new BarEntry(6f, 1800f));
+        entries.add(new BarEntry(7f, 1700f));
+        entries.add(new BarEntry(6f, 1900f));
+
         BarDataSet set = new BarDataSet(entries, "시간당 음수량(ml)");
 
         BarData data = new BarData(set);
@@ -100,27 +109,40 @@ public class FragDay extends Fragment {
 
         XAxis x = chart.getXAxis();
         x.setAxisMinimum(0);
-        x.setAxisMaximum(24);
+        x.setAxisMaximum(30);
         chart.invalidate(); // refresh
 
         MyMarkerView mv = new MyMarkerView(this.getActivity(),R.layout.my_marker_view);
         chart.setMarker(mv);
 
-//        final ArrayList<String> xAxisLabel = new ArrayList<>();
-//        xAxisLabel.add("Mon");
-//        xAxisLabel.add("Tue");
-//        xAxisLabel.add("Wed");
-//        xAxisLabel.add("Thu");
-//        xAxisLabel.add("Fri");
-//        xAxisLabel.add("Sat");
-//        xAxisLabel.add("Sun");
-
+        final ArrayList<String> xLabel = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("dd", Locale.KOREA);
+        calendar.set(Calendar.DAY_OF_MONTH,0);
+        xLabel.add("");
+        for(int i=0;i<=29;i++){
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            Date date= calendar.getTime();
+            String txtDate= dateFormat.format(date);
+            xLabel.add(txtDate);
+        }
 
         XAxis xAxis = chart.getXAxis();
-        //xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return xLabel.get((int)value);
+            }
+        });
         xAxis.setTextSize(15f);
         xAxis.setCenterAxisLabels(false);
         xAxis.setGranularity(1f);
+
+        YAxis yAxis = chart.getAxisLeft();
+        yAxis.setAxisMaxValue(2400);
+        yAxis.setAxisMinValue(0);
+        yAxis.setLabelCount(6);
+        chart.getAxisRight().setEnabled(false);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         readData();

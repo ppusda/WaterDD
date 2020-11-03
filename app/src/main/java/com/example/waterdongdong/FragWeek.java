@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -77,13 +78,15 @@ public class FragWeek extends Fragment {
         drink_intake = (TextView) view.findViewById(R.id.drink_intake);
 
         List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(1f, 80f));
-        entries.add(new BarEntry(2f, 60f));
-        entries.add(new BarEntry(3f, 50f));
-        entries.add(new BarEntry(4f, 50f));
-        entries.add(new BarEntry(5f, 70f));
-        entries.add(new BarEntry(6f, 60f));
-        entries.add(new BarEntry(7f, 30f));
+        entries.add(new BarEntry(0f, 0f));
+        entries.add(new BarEntry(1f, 1250f));
+        entries.add(new BarEntry(2f, 800f));
+        entries.add(new BarEntry(3f, 1500f));
+        entries.add(new BarEntry(4f, 900f));
+        entries.add(new BarEntry(5f, 1300f));
+        entries.add(new BarEntry(6f, 1200f));
+        entries.add(new BarEntry(7f, 800f));
+
         BarDataSet set = new BarDataSet(entries, "일 음수량(ml)");
 
         BarData data = new BarData(set);
@@ -119,6 +122,12 @@ public class FragWeek extends Fragment {
         xAxis.setTextSize(15f);
         xAxis.setCenterAxisLabels(false);
         xAxis.setGranularity(1f);
+
+        YAxis yAxis = chart.getAxisLeft();
+        yAxis.setAxisMaxValue(2400);
+        yAxis.setAxisMinValue(0);
+        yAxis.setLabelCount(6);
+        chart.getAxisRight().setEnabled(false);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         readData();

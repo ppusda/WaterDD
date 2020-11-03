@@ -1,0 +1,164 @@
+Index: app/src/main/java/com/example/waterdongdong/FragDay.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.waterdongdong;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.github.mikephil.charting.charts.BarChart;\r\nimport com.github.mikephil.charting.components.XAxis;\r\nimport com.github.mikephil.charting.data.BarData;\r\nimport com.github.mikephil.charting.data.BarDataSet;\r\nimport com.github.mikephil.charting.data.BarEntry;\r\nimport com.github.mikephil.charting.formatter.IndexAxisValueFormatter;\r\nimport com.github.mikephil.charting.utils.ColorTemplate;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class FragDay extends Fragment {\r\n    private View view;\r\n    TextView drink_name, drink_intake;\r\n    //String[] xAxisLables = new String[]{\"1\",\"2\", \"3\", \"4\" ...};\r\n    private DatabaseReference mDatabase;\r\n    String chk_mod;\r\n\r\n    public static FragDay newInstance(){\r\n        FragDay fragDay = new FragDay();\r\n        return fragDay;\r\n    }\r\n\r\n    private void readData(){\r\n        mDatabase.child(\"record\").addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {\r\n                Data data = dataSnapshot.getValue(Data.class);\r\n                drink_name.setText(data.getD_name());\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError databaseError) {\r\n                System.out.println(\"The read failed: \" + databaseError.getCode());\r\n            }\r\n        });\r\n    }\r\n\r\n    private void readMod(){\r\n        mDatabase.child(\"mod\").addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {\r\n                Mod mod = dataSnapshot.getValue(Mod.class);\r\n                chk_mod = mod.getMod();\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError databaseError) {\r\n                System.out.println(\"The read failed: \" + databaseError.getCode());\r\n            }\r\n        });\r\n    }\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        view = inflater.inflate(R.layout.frag_month,container,false);\r\n        BarChart chart = (BarChart) view.findViewById(R.id.barchart);\r\n        drink_name = (TextView)view.findViewById(R.id.drink_name);\r\n        drink_intake = (TextView) view.findViewById(R.id.drink_intake);\r\n\r\n        //chart.setScaleEnabled(false);\r\n        ArrayList NoOfEmp = new ArrayList();\r\n\r\n        List<BarEntry> entries = new ArrayList<>();\r\n        entries.add(new BarEntry(0f, 30f));\r\n        entries.add(new BarEntry(1f, 80f));\r\n        entries.add(new BarEntry(2f, 60f));\r\n        entries.add(new BarEntry(3f, 50f));\r\n        entries.add(new BarEntry(4f, 50f));\r\n        entries.add(new BarEntry(5f, 70f));\r\n        entries.add(new BarEntry(6f, 60f));\r\n        entries.add(new BarEntry(7f, 70f));\r\n        entries.add(new BarEntry(8f, 60f));\r\n        BarDataSet set = new BarDataSet(entries, \"시간당 음수량(ml)\");\r\n\r\n        BarData data = new BarData(set);\r\n        data.setBarWidth(0.8f); // set custom bar width\r\n        chart.setData(data);\r\n        chart.setFitBars(true); // make the x-axis fit exactly all bars\r\n        set.setDrawValues(false); // 차트 위의 값 삭제\r\n        chart.setExtraTopOffset(20f); //차트와 위의 간격\r\n\r\n        XAxis x = chart.getXAxis();\r\n        x.setAxisMinimum(0);\r\n        x.setAxisMaximum(24);\r\n        chart.invalidate(); // refresh\r\n\r\n        MyMarkerView mv = new MyMarkerView(this.getActivity(),R.layout.my_marker_view);\r\n        chart.setMarker(mv);\r\n\r\n//        final ArrayList<String> xAxisLabel = new ArrayList<>();\r\n//        xAxisLabel.add(\"Mon\");\r\n//        xAxisLabel.add(\"Tue\");\r\n//        xAxisLabel.add(\"Wed\");\r\n//        xAxisLabel.add(\"Thu\");\r\n//        xAxisLabel.add(\"Fri\");\r\n//        xAxisLabel.add(\"Sat\");\r\n//        xAxisLabel.add(\"Sun\");\r\n\r\n\r\n        XAxis xAxis = chart.getXAxis();\r\n        //xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));\r\n        xAxis.setTextSize(15f);\r\n        xAxis.setCenterAxisLabels(false);\r\n        xAxis.setGranularity(1f);\r\n\r\n        mDatabase = FirebaseDatabase.getInstance().getReference();\r\n        readData();\r\n        readMod();\r\n\r\n        return view;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/waterdongdong/FragDay.java	(revision 659ec537b6608f3b3e296662e149f6624e252d21)
++++ app/src/main/java/com/example/waterdongdong/FragDay.java	(date 1604329144209)
+@@ -11,10 +11,12 @@
+ import androidx.fragment.app.Fragment;
+ 
+ import com.github.mikephil.charting.charts.BarChart;
++import com.github.mikephil.charting.components.AxisBase;
+ import com.github.mikephil.charting.components.XAxis;
+ import com.github.mikephil.charting.data.BarData;
+ import com.github.mikephil.charting.data.BarDataSet;
+ import com.github.mikephil.charting.data.BarEntry;
++import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+ import com.github.mikephil.charting.utils.ColorTemplate;
+ import com.google.firebase.database.DataSnapshot;
+@@ -23,8 +25,13 @@
+ import com.google.firebase.database.FirebaseDatabase;
+ import com.google.firebase.database.ValueEventListener;
+ 
++import java.text.DateFormat;
++import java.text.SimpleDateFormat;
+ import java.util.ArrayList;
++import java.util.Calendar;
++import java.util.Date;
+ import java.util.List;
++import java.util.Locale;
+ 
+ public class FragDay extends Fragment {
+     private View view;
+@@ -100,24 +107,31 @@
+ 
+         XAxis x = chart.getXAxis();
+         x.setAxisMinimum(0);
+-        x.setAxisMaximum(24);
++        x.setAxisMaximum(29);
+         chart.invalidate(); // refresh
+ 
+         MyMarkerView mv = new MyMarkerView(this.getActivity(),R.layout.my_marker_view);
+         chart.setMarker(mv);
+ 
+-//        final ArrayList<String> xAxisLabel = new ArrayList<>();
+-//        xAxisLabel.add("Mon");
+-//        xAxisLabel.add("Tue");
+-//        xAxisLabel.add("Wed");
+-//        xAxisLabel.add("Thu");
+-//        xAxisLabel.add("Fri");
+-//        xAxisLabel.add("Sat");
+-//        xAxisLabel.add("Sun");
+-
++        final ArrayList<String> xLabel = new ArrayList<>();
++        Calendar calendar = Calendar.getInstance();
++        DateFormat dateFormat = new SimpleDateFormat("dd", Locale.KOREA);
++        calendar.set(Calendar.DAY_OF_MONTH,0);
++        int size = 
++        for(int i=0;i<=29;i++){
++            calendar.add(Calendar.DAY_OF_YEAR, 1);
++            Date date= calendar.getTime();
++            String txtDate= dateFormat.format(date);
++            xLabel.add(txtDate);
++        }
+ 
+         XAxis xAxis = chart.getXAxis();
+-        //xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
++        xAxis.setValueFormatter(new IAxisValueFormatter() {
++            @Override
++            public String getFormattedValue(float value, AxisBase axis) {
++                return xLabel.get((int)value);
++            }
++        });
+         xAxis.setTextSize(15f);
+         xAxis.setCenterAxisLabels(false);
+         xAxis.setGranularity(1f);
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/compiler.xml	(date 1604228738177)
++++ .idea/compiler.xml	(date 1604228738177)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="CompilerConfiguration">
++    <bytecodeTargetLevel target="1.8" />
++  </component>
++</project>
+\ No newline at end of file
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\r\n\r\nbuildscript {\r\n    \r\n    repositories {\r\n        google()\r\n        jcenter()\r\n        \r\n    }\r\n    dependencies {\r\n        classpath 'com.android.tools.build:gradle:4.0.2'\r\n        classpath 'com.google.gms:google-services:4.3.3'\r\n\r\n\r\n\r\n        // NOTE: Do not place your application dependencies here; they belong\r\n        // in the individual module build.gradle files\r\n    }\r\n}\r\n\r\nallprojects {\r\n    repositories {\r\n        google()\r\n        jcenter()\r\n\r\n        //그래프\r\n        maven { url 'https://jitpack.io' }\r\n    }\r\n}\r\n\r\ntask clean(type: Delete) {\r\n    delete rootProject.buildDir\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- build.gradle	(revision 659ec537b6608f3b3e296662e149f6624e252d21)
++++ build.gradle	(date 1604229139920)
+@@ -8,7 +8,7 @@
+         
+     }
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:4.0.2'
++        classpath 'com.android.tools.build:gradle:4.1.0'
+         classpath 'com.google.gms:google-services:4.3.3'
+ 
+ 
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_1_7\" project-jdk-name=\"1.8\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision 659ec537b6608f3b3e296662e149f6624e252d21)
++++ .idea/misc.xml	(date 1604228738158)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\r\n  <component name=\"GradleSettings\">\r\n    <option name=\"linkedExternalProjectsSettings\">\r\n      <GradleProjectSettings>\r\n        <option name=\"testRunner\" value=\"PLATFORM\" />\r\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\r\n        <option name=\"modules\">\r\n          <set>\r\n            <option value=\"$PROJECT_DIR$\" />\r\n            <option value=\"$PROJECT_DIR$/app\" />\r\n          </set>\r\n        </option>\r\n        <option name=\"resolveModulePerSourceSet\" value=\"false\" />\r\n      </GradleProjectSettings>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/gradle.xml	(revision 659ec537b6608f3b3e296662e149f6624e252d21)
++++ .idea/gradle.xml	(date 1604228703434)
+@@ -14,6 +14,7 @@
+           </set>
+         </option>
+         <option name="resolveModulePerSourceSet" value="false" />
++        <option name="useQualifiedModuleNames" value="true" />
+       </GradleProjectSettings>
+     </option>
+   </component>
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#Tue Sep 01 15:44:17 KST 2020\r\ndistributionBase=GRADLE_USER_HOME\r\ndistributionPath=wrapper/dists\r\nzipStoreBase=GRADLE_USER_HOME\r\nzipStorePath=wrapper/dists\r\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-6.1.1-all.zip\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>x-windows-949
+===================================================================
+--- gradle/wrapper/gradle-wrapper.properties	(revision 659ec537b6608f3b3e296662e149f6624e252d21)
++++ gradle/wrapper/gradle-wrapper.properties	(date 1604229139934)
+@@ -1,6 +1,6 @@
+-#Tue Sep 01 15:44:17 KST 2020
++#Sun Nov 01 20:12:19 KST 2020
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-6.5-bin.zip
