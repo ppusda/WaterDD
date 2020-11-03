@@ -61,20 +61,6 @@ public class FragDay extends Fragment {
         });
     }
 
-    private void readMod(){
-        mDatabase.child("mod").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Mod mod = dataSnapshot.getValue(Mod.class);
-                chk_mod = mod.getMod();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
-    }
 
     @Nullable
     @Override
@@ -146,7 +132,6 @@ public class FragDay extends Fragment {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         readData();
-        readMod();
 
         return view;
     }
