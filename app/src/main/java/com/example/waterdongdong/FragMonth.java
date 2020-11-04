@@ -18,21 +18,26 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class FragMonth extends Fragment {
     private View view;
     TextView drink_name, drink_intake;
     //String[] xAxisLables = new String[]{"1","2", "3", "4" ...};
     private DatabaseReference mDatabase;
-    String chk_mod;
+    String chk_mod, date;
 
     public static FragMonth newInstance(){
         FragMonth fragMonth = new FragMonth();
@@ -114,8 +119,40 @@ public class FragMonth extends Fragment {
 
 
 
+        Date currentTime = Calendar.getInstance().getTime();
+
+        SimpleDateFormat dateFormat_Month = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        date = dateFormat_Month.format(currentTime);
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        readData();
+
+        mDatabase.child("record").child(date).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Data data = snapshot.getValue(Data.class);
+                drink_name.setText(data.getD_name());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         return view;
     }

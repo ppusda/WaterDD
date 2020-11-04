@@ -20,6 +20,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,27 +41,12 @@ public class FragDay extends Fragment {
     //String[] xAxisLables = new String[]{"1","2", "3", "4" ...};
     private DatabaseReference mDatabase;
     String chk_mod;
+    String date;
 
     public static FragDay newInstance(){
         FragDay fragDay = new FragDay();
         return fragDay;
     }
-
-    private void readData(){
-        mDatabase.child("record").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Data data = dataSnapshot.getValue(Data.class);
-                drink_name.setText(data.getD_name());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
-    }
-
 
     @Nullable
     @Override
@@ -130,8 +116,40 @@ public class FragDay extends Fragment {
         yAxis.setLabelCount(6);
         chart.getAxisRight().setEnabled(false);
 
+        Date currentTime = Calendar.getInstance().getTime();
+
+        SimpleDateFormat dateFormat_Day = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        date = dateFormat_Day.format(currentTime);
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        readData();
+
+        mDatabase.child("record").child(date).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Data data = snapshot.getValue(Data.class);
+                drink_name.setText(data.getD_name());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         return view;
     }

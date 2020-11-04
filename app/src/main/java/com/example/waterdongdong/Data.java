@@ -7,17 +7,19 @@ public class Data {
     public int cal;
     public String time;
     public String weekDay;
+    public int cnt;
 
     public Data(){
 
     }
 
-    public Data(String category, String d_name, int cal, String time, String weekDay) {
+    public Data(String category, String d_name, int cal, String time, String weekDay, int cnt) {
         this.category = category;
         this.d_name = d_name;
         this.cal = cal;
         this.time = time;
         this.weekDay = weekDay;
+        this.cnt = cnt;
     }
 
     public String getCategory() {
@@ -60,11 +62,11 @@ public class Data {
         this.weekDay = weekDay;
     }
 
-    @Override
-    public String toString() {
-        return "Data{" +
-                "catagory='" + category + '\'' +
-                ", d_name='" + d_name + '\'' +
-                '}';
+    public int getCnt() {
+        return cnt;
+    }
+
+    public void setCnt(int cnt) {
+        this.cnt = cnt;
     }
 }

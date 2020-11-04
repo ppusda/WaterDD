@@ -22,6 +22,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gelitenight.waveview.library.WaveView;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -99,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==1){
             if(resultCode==RESULT_OK){
-                readData();
+                //readData();
                 readMod();
                 readUser();
             }
@@ -136,6 +140,8 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         final WaveView waveView = (WaveView) findViewById(R.id.wave);
 
         Date currentTime = Calendar.getInstance().getTime();
@@ -150,8 +156,9 @@ public class MainActivity extends AppCompatActivity {
             public void onDataReceived(byte[] data, String message) {
 
                 String[] array=message.split(",");
-
                 now_intake =  Integer.parseInt(array[1]);
+
+                readIntake(); // 값을 읽어와서 동기화
 
                 if(bf_intake == 0 || now_intake != 0){
                     Intent q_pop_in = new Intent(getApplicationContext(), Select_PopupActivity.class);
@@ -161,7 +168,10 @@ public class MainActivity extends AppCompatActivity {
 
                 if(now_intake != 0){
                     if(bf_intake != 0){
-                        my_intake += (bf_intake - now_intake);
+                        if(bf_intake > now_intake){
+                            my_intake += (bf_intake - now_intake);
+                            writeIntake(my_intake);
+                        }
                         tot_cal = cal * my_intake;
                     }
                 } // 현재 물의 양과 전의 물의 양을 비교하여 내가 현재 마신 물의 양을 구한다.
@@ -221,11 +231,42 @@ public class MainActivity extends AppCompatActivity {
         btn_db = findViewById(R.id.btn_db);
         btn_mod = findViewById(R.id.btn_mod);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
-        readData();
         readMod();
         readUser();
+
+        mDatabase.child("record").child(date).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                // Log.d("MainActivity", "onChildAdded : " + snapshot.getValue());
+
+                Data data = snapshot.getValue(Data.class);
+                txt_name.setText(data.getD_name());
+            } // Log로 값을 확인해 보았을 때 snapshot.getValue는 값들을 모두 가져온다는 걸 알 수 있다.
+            // 이를 전체 모두 표현하려면 ArrayList에 담아서 해결해야할 듯 하다.
+            // ** cnt에 대해서 - 위에 Run버튼을 누르면 앱이 새로 install 되는데 그 때마다 값이 리셋 된다.
+            // 012345가 쌓이다가도 다시 디버깅하려고 누르면 0이 되기에 참고하기 바람.
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        // String Key = snapshot.getKey(); 키 받아오기
 
         img_setting.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -262,20 +303,20 @@ public class MainActivity extends AppCompatActivity {
         mWaveHelper = new WaveHelper(waveView, Waterlevel);
     }
 
-    private void readData(){
-        mDatabase.child("record").child(date).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Data data = dataSnapshot.getValue(Data.class);
-                txt_name.setText(data.getD_name());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
-    }
+//    private void readData(){
+//        mDatabase.child("record").child(date).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                Data data = dataSnapshot.getValue(Data.class);
+//                txt_name.setText(data.getD_name());
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                System.out.println("The read failed: " + databaseError.getCode());
+//            }
+//        });
+//    } 구버전 데이터 읽기
 
     private void readMod(){
         mDatabase.child("mod").addValueEventListener(new ValueEventListener() {
@@ -298,6 +339,40 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 goal_intake = user.getGoal_intake();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+    }
+
+    private void writeIntake(int Intake){
+        Intake intake = new Intake(Intake);
+
+        mDatabase.child("record").child(date).setValue(intake)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext(), "저장을 완료했습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "저장을 실패했습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+    }
+
+    private void readIntake(){
+        mDatabase.child("record").child(date).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Intake intake = dataSnapshot.getValue(Intake.class);
+                my_intake = intake.getT_intake();
             }
 
             @Override

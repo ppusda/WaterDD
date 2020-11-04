@@ -56,6 +56,7 @@ public class Select_PopupActivity extends AppCompatActivity {
 
     String date, time, weekDay;
     int tot_cal;
+    static int cnt = 0;
 
     private DatabaseReference mDatabase;
 
@@ -239,17 +240,19 @@ public class Select_PopupActivity extends AppCompatActivity {
                     chk_name = ed_name.getText().toString();
                 }
 
-                writeRecord(chk_category, chk_name, tot_cal, time, weekDay);
+                writeRecord(chk_category, chk_name, tot_cal, time, weekDay, cnt);
+                cnt ++;
 
                 finish();
             }
         });
     }
 
-    private void writeRecord(String category, String name, int cal, String time, String weekDay){
-        Data data = new Data(category, name, cal, time, weekDay);
 
-        mDatabase.child("record").child(date).setValue(data)
+    private void writeRecord(String category, String name, int cal, String time, String weekDay, int cnt){
+        Data data = new Data(category, name, cal, time, weekDay, cnt);
+
+        mDatabase.child("record").child(date).push().setValue(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
