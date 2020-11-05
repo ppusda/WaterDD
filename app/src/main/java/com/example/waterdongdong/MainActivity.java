@@ -158,7 +158,9 @@ public class MainActivity extends AppCompatActivity {
                 String[] array=message.split(",");
                 now_intake =  Integer.parseInt(array[1]);
 
-                readIntake(); // 값을 읽어와서 동기화
+                if(Select_PopupActivity.cnt != 0){
+                    readIntake(); // 값을 읽어와서 동기화
+                }
 
                 if(bf_intake == 0 || now_intake != 0){
                     Intent q_pop_in = new Intent(getApplicationContext(), Select_PopupActivity.class);
