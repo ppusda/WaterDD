@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         readMod();
         readUser();
 
-        mDatabase.child("record").child(date).addChildEventListener(new ChildEventListener() {
+        mDatabase.child("record").child(date).child("d_date").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // Log.d("MainActivity", "onChildAdded : " + snapshot.getValue());
@@ -351,24 +351,22 @@ public class MainActivity extends AppCompatActivity {
     private void writeIntake(int Intake){
         Intake intake = new Intake(Intake);
 
-        mDatabase.child("record").child(date).setValue(intake)
+        mDatabase.child("record").child(date).child("d_intake").setValue(intake)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(getApplicationContext(), "저장을 완료했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), "저장을 실패했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
 
     }
 
     private void readIntake(){
-        mDatabase.child("record").child(date).addValueEventListener(new ValueEventListener() {
+        mDatabase.child("record").child(date).child("d_intake").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Intake intake = dataSnapshot.getValue(Intake.class);

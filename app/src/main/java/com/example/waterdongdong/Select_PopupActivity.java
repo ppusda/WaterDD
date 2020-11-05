@@ -252,7 +252,7 @@ public class Select_PopupActivity extends AppCompatActivity {
     private void writeRecord(String category, String name, int cal, String time, String weekDay, int cnt){
         Data data = new Data(category, name, cal, time, weekDay, cnt);
 
-        mDatabase.child("record").child(date).push().setValue(data)
+        mDatabase.child("record").child(date).child("d_date").push().setValue(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
