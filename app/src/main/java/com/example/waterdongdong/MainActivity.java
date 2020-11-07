@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(Select_PopupActivity.cnt != 0){
                     readIntake(); // 값을 읽어와서 동기화
-                }
+                }// 아니면 DB에서 값을 읽어와서 0이상 즉 1부터의 토탈 값을 가져와 동기화를 하면 될 것 같다.
 
                 if(bf_intake == 0 || now_intake != 0){
                     Intent q_pop_in = new Intent(getApplicationContext(), Select_PopupActivity.class);

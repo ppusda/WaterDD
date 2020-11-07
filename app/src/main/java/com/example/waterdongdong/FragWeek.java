@@ -112,7 +112,7 @@ public class FragWeek extends Fragment {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        mDatabase.child("record").child(date).addChildEventListener(new ChildEventListener() {
+        mDatabase.child("record").child(date).child("d_date").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Data data = snapshot.getValue(Data.class);
