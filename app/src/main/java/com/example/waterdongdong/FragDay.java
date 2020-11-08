@@ -40,7 +40,7 @@ public class FragDay extends Fragment {
     TextView drink_name, drink_intake;
     //String[] xAxisLables = new String[]{"1","2", "3", "4" ...};
     private DatabaseReference mDatabase;
-    String chk_mod;
+    static int my_intake;
     String date;
 
     public static FragDay newInstance(){
@@ -51,7 +51,7 @@ public class FragDay extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.frag_month,container,false);
+        view = inflater.inflate(R.layout.frag_day,container,false);
         BarChart chart = (BarChart) view.findViewById(R.id.barchart);
         drink_name = (TextView)view.findViewById(R.id.drink_name);
         drink_intake = (TextView) view.findViewById(R.id.drink_intake);
@@ -78,6 +78,7 @@ public class FragDay extends Fragment {
         chart.setFitBars(true); // make the x-axis fit exactly all bars
         set.setDrawValues(false); // 차트 위의 값 삭제
         chart.setExtraTopOffset(20f); //차트와 위의 간격
+        data.setBarWidth(0.7f);
 
         XAxis x = chart.getXAxis();
         x.setAxisMinimum(0);
@@ -126,9 +127,14 @@ public class FragDay extends Fragment {
         mDatabase.child("record").child(date).child("d_date").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                // Log.d("MainActivity", "onChildAdded : " + snapshot.getValue());
+
                 Data data = snapshot.getValue(Data.class);
                 drink_name.setText(data.getD_name());
-            }
+            } // Log로 값을 확인해 보았을 때 snapshot.getValue는 값들을 모두 가져온다는 걸 알 수 있다.
+            // 이를 전체 모두 표현하려면 ArrayList에 담아서 해결해야할 듯 하다.
+            // ** cnt에 대해서 - 위에 Run버튼을 누르면 앱이 새로 install 되는데 그 때마다 값이 리셋 된다.
+            // 012345가 쌓이다가도 다시 디버깅하려고 누르면 0이 되기에 참고하기 바람.
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -151,6 +157,23 @@ public class FragDay extends Fragment {
             }
         });
 
+        readIntake();
         return view;
     }
+    private void readIntake(){
+        mDatabase.child("record").child(date).child("d_intake").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Intake intake = dataSnapshot.getValue(Intake.class);
+                my_intake = intake.getT_intake();
+                drink_intake.setText(my_intake+"ml");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+    }
+
 }

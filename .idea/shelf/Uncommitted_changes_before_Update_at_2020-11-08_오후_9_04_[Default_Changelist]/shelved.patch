@@ -1,0 +1,226 @@
+Index: app/src/main/java/com/example/waterdongdong/FragDay.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.waterdongdong;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.github.mikephil.charting.charts.BarChart;\r\nimport com.github.mikephil.charting.components.AxisBase;\r\nimport com.github.mikephil.charting.components.XAxis;\r\nimport com.github.mikephil.charting.components.YAxis;\r\nimport com.github.mikephil.charting.data.BarData;\r\nimport com.github.mikephil.charting.data.BarDataSet;\r\nimport com.github.mikephil.charting.data.BarEntry;\r\nimport com.github.mikephil.charting.formatter.IAxisValueFormatter;\r\nimport com.github.mikephil.charting.formatter.IndexAxisValueFormatter;\r\nimport com.github.mikephil.charting.utils.ColorTemplate;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.text.DateFormat;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.ArrayList;\r\nimport java.util.Calendar;\r\nimport java.util.Date;\r\nimport java.util.List;\r\nimport java.util.Locale;\r\n\r\npublic class FragDay extends Fragment {\r\n    private View view;\r\n    TextView drink_name, drink_intake;\r\n    //String[] xAxisLables = new String[]{\"1\",\"2\", \"3\", \"4\" ...};\r\n    private DatabaseReference mDatabase;\r\n    String chk_mod;\r\n    String date;\r\n\r\n    public static FragDay newInstance(){\r\n        FragDay fragDay = new FragDay();\r\n        return fragDay;\r\n    }\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        view = inflater.inflate(R.layout.frag_month,container,false);\r\n        BarChart chart = (BarChart) view.findViewById(R.id.barchart);\r\n        drink_name = (TextView)view.findViewById(R.id.drink_name);\r\n        drink_intake = (TextView) view.findViewById(R.id.drink_intake);\r\n\r\n        //chart.setScaleEnabled(false);\r\n        ArrayList NoOfEmp = new ArrayList();\r\n\r\n        List<BarEntry> entries = new ArrayList<>();\r\n        entries.add(new BarEntry(0f, 0f));\r\n        entries.add(new BarEntry(1f, 1250f));\r\n        entries.add(new BarEntry(2f, 2200f));\r\n        entries.add(new BarEntry(3f, 1500f));\r\n        entries.add(new BarEntry(4f, 1300f));\r\n        entries.add(new BarEntry(5f, 1300f));\r\n        entries.add(new BarEntry(6f, 1800f));\r\n        entries.add(new BarEntry(7f, 1700f));\r\n        entries.add(new BarEntry(6f, 1900f));\r\n\r\n        BarDataSet set = new BarDataSet(entries, \"시간당 음수량(ml)\");\r\n\r\n        BarData data = new BarData(set);\r\n        data.setBarWidth(0.8f); // set custom bar width\r\n        chart.setData(data);\r\n        chart.setFitBars(true); // make the x-axis fit exactly all bars\r\n        set.setDrawValues(false); // 차트 위의 값 삭제\r\n        chart.setExtraTopOffset(20f); //차트와 위의 간격\r\n\r\n        XAxis x = chart.getXAxis();\r\n        x.setAxisMinimum(0);\r\n        x.setAxisMaximum(30);\r\n        chart.invalidate(); // refresh\r\n\r\n        MyMarkerView mv = new MyMarkerView(this.getActivity(),R.layout.my_marker_view);\r\n        chart.setMarker(mv);\r\n\r\n        final ArrayList<String> xLabel = new ArrayList<>();\r\n        Calendar calendar = Calendar.getInstance();\r\n        DateFormat dateFormat = new SimpleDateFormat(\"dd\", Locale.KOREA);\r\n        calendar.set(Calendar.DAY_OF_MONTH,0);\r\n        xLabel.add(\"\");\r\n        for(int i=0;i<=29;i++){\r\n            calendar.add(Calendar.DAY_OF_YEAR, 1);\r\n            Date date= calendar.getTime();\r\n            String txtDate= dateFormat.format(date);\r\n            xLabel.add(txtDate);\r\n        }\r\n\r\n        XAxis xAxis = chart.getXAxis();\r\n        xAxis.setValueFormatter(new IAxisValueFormatter() {\r\n            @Override\r\n            public String getFormattedValue(float value, AxisBase axis) {\r\n                return xLabel.get((int)value);\r\n            }\r\n        });\r\n        xAxis.setTextSize(15f);\r\n        xAxis.setCenterAxisLabels(false);\r\n        xAxis.setGranularity(1f);\r\n\r\n        YAxis yAxis = chart.getAxisLeft();\r\n        yAxis.setAxisMaxValue(2400);\r\n        yAxis.setAxisMinValue(0);\r\n        yAxis.setLabelCount(6);\r\n        chart.getAxisRight().setEnabled(false);\r\n\r\n        Date currentTime = Calendar.getInstance().getTime();\r\n\r\n        SimpleDateFormat dateFormat_Day = new SimpleDateFormat(\"yyyy/MM/dd\", Locale.getDefault());\r\n        date = dateFormat_Day.format(currentTime);\r\n\r\n        mDatabase = FirebaseDatabase.getInstance().getReference();\r\n\r\n        mDatabase.child(\"record\").child(date).child(\"d_date\").addChildEventListener(new ChildEventListener() {\r\n            @Override\r\n            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                Data data = snapshot.getValue(Data.class);\r\n                drink_name.setText(data.getD_name());\r\n            }\r\n\r\n            @Override\r\n            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n\r\n        return view;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/waterdongdong/FragDay.java	(revision 23bfe553c9930c3c4226960ad4e8a49dcefaaa0f)
++++ app/src/main/java/com/example/waterdongdong/FragDay.java	(date 1604836204942)
+@@ -40,7 +40,7 @@
+     TextView drink_name, drink_intake;
+     //String[] xAxisLables = new String[]{"1","2", "3", "4" ...};
+     private DatabaseReference mDatabase;
+-    String chk_mod;
++    String my_intake;
+     String date;
+ 
+     public static FragDay newInstance(){
+@@ -51,7 +51,7 @@
+     @Nullable
+     @Override
+     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+-        view = inflater.inflate(R.layout.frag_month,container,false);
++        view = inflater.inflate(R.layout.frag_day,container,false);
+         BarChart chart = (BarChart) view.findViewById(R.id.barchart);
+         drink_name = (TextView)view.findViewById(R.id.drink_name);
+         drink_intake = (TextView) view.findViewById(R.id.drink_intake);
+@@ -78,6 +78,7 @@
+         chart.setFitBars(true); // make the x-axis fit exactly all bars
+         set.setDrawValues(false); // 차트 위의 값 삭제
+         chart.setExtraTopOffset(20f); //차트와 위의 간격
++        data.setBarWidth(0.7f);
+ 
+         XAxis x = chart.getXAxis();
+         x.setAxisMinimum(0);
+@@ -126,9 +127,14 @@
+         mDatabase.child("record").child(date).child("d_date").addChildEventListener(new ChildEventListener() {
+             @Override
+             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
++                // Log.d("MainActivity", "onChildAdded : " + snapshot.getValue());
++
+                 Data data = snapshot.getValue(Data.class);
+                 drink_name.setText(data.getD_name());
+-            }
++            } // Log로 값을 확인해 보았을 때 snapshot.getValue는 값들을 모두 가져온다는 걸 알 수 있다.
++            // 이를 전체 모두 표현하려면 ArrayList에 담아서 해결해야할 듯 하다.
++            // ** cnt에 대해서 - 위에 Run버튼을 누르면 앱이 새로 install 되는데 그 때마다 값이 리셋 된다.
++            // 012345가 쌓이다가도 다시 디버깅하려고 누르면 0이 되기에 참고하기 바람.
+ 
+             @Override
+             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+@@ -151,6 +157,23 @@
+             }
+         });
+ 
++        readIntake();
+         return view;
+     }
++    private void readIntake(){
++        mDatabase.child("record").child("2020").child("11").child("02").addValueEventListener(new ValueEventListener() {
++            @Override
++            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
++                Data data = dataSnapshot.getValue(Data.class);
++                my_intake = data.getTime();
++                drink_intake.setText(my_intake);
++            }
++
++            @Override
++            public void onCancelled(@NonNull DatabaseError databaseError) {
++                System.out.println("The read failed: " + databaseError.getCode());
++            }
++        });
++    }
++
+ }
+Index: app/src/main/java/com/example/waterdongdong/FragMonth.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.waterdongdong;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.github.mikephil.charting.charts.BarChart;\r\nimport com.github.mikephil.charting.components.XAxis;\r\nimport com.github.mikephil.charting.components.YAxis;\r\nimport com.github.mikephil.charting.data.BarData;\r\nimport com.github.mikephil.charting.data.BarDataSet;\r\nimport com.github.mikephil.charting.data.BarEntry;\r\nimport com.github.mikephil.charting.formatter.IndexAxisValueFormatter;\r\nimport com.github.mikephil.charting.utils.ColorTemplate;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.ArrayList;\r\nimport java.util.Calendar;\r\nimport java.util.Date;\r\nimport java.util.List;\r\nimport java.util.Locale;\r\n\r\npublic class FragMonth extends Fragment {\r\n    private View view;\r\n    TextView drink_name, drink_intake;\r\n    //String[] xAxisLables = new String[]{\"1\",\"2\", \"3\", \"4\" ...};\r\n    private DatabaseReference mDatabase;\r\n    String chk_mod, date;\r\n\r\n    public static FragMonth newInstance(){\r\n        FragMonth fragMonth = new FragMonth();\r\n        return fragMonth;\r\n    }\r\n\r\n    private void readData(){\r\n        mDatabase.child(\"record\").addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {\r\n                Data data = dataSnapshot.getValue(Data.class);\r\n                drink_name.setText(data.getD_name());\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError databaseError) {\r\n                System.out.println(\"The read failed: \" + databaseError.getCode());\r\n            }\r\n        });\r\n    }\r\n\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        view = inflater.inflate(R.layout.frag_month,container,false);\r\n        BarChart chart = (BarChart) view.findViewById(R.id.barchart);\r\n        drink_name = (TextView)view.findViewById(R.id.drink_name);\r\n        drink_intake = (TextView) view.findViewById(R.id.drink_intake);\r\n\r\n        ArrayList NoOfEmp = new ArrayList();\r\n\r\n        List<BarEntry> entries = new ArrayList<>();\r\n        entries.add(new BarEntry(1f, 1250f));\r\n        entries.add(new BarEntry(2f, 800f));\r\n        entries.add(new BarEntry(3f, 1500f));\r\n        entries.add(new BarEntry(4f, 900f));\r\n        entries.add(new BarEntry(5f, 1300f));\r\n\r\n        BarDataSet set = new BarDataSet(entries, \"주 평균 음수량(ml)\");\r\n\r\n        BarData data = new BarData(set);\r\n        data.setBarWidth(0.7f); // set custom bar width\r\n        chart.setData(data);\r\n        chart.setFitBars(true); // make the x-axis fit exactly all bars\r\n        set.setDrawValues(false); // 차트 위의 값 삭제\r\n        chart.setExtraTopOffset(20f); //차트와 위의 간격\r\n\r\n        XAxis x = chart.getXAxis();\r\n        x.setAxisMinimum(0);\r\n        x.setAxisMaximum(6);\r\n\r\n        chart.invalidate(); // refresh\r\n\r\n        MyMarkerView mv = new MyMarkerView(this.getActivity(),R.layout.my_marker_view);\r\n        chart.setMarker(mv);\r\n\r\n        final ArrayList<String> xAxisLabel = new ArrayList<>();\r\n        xAxisLabel.add(\"\");\r\n        xAxisLabel.add(\"week1\");\r\n        xAxisLabel.add(\"week2\");\r\n        xAxisLabel.add(\"week3\");\r\n        xAxisLabel.add(\"week4\");\r\n        xAxisLabel.add(\"week5\");\r\n        xAxisLabel.add(\"\");\r\n\r\n\r\n        XAxis xAxis = chart.getXAxis();\r\n        xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));\r\n        xAxis.setTextSize(15f);\r\n        xAxis.setCenterAxisLabels(false);\r\n        xAxis.setGranularity(1f);\r\n\r\n        YAxis yAxis = chart.getAxisLeft();\r\n        yAxis.setAxisMaxValue(2400);\r\n        yAxis.setAxisMinValue(0);\r\n        yAxis.setLabelCount(6);\r\n        chart.getAxisRight().setEnabled(false);\r\n\r\n\r\n\r\n        Date currentTime = Calendar.getInstance().getTime();\r\n\r\n        SimpleDateFormat dateFormat_Month = new SimpleDateFormat(\"yyyy/MM/dd\", Locale.getDefault());\r\n        date = dateFormat_Month.format(currentTime);\r\n\r\n        mDatabase = FirebaseDatabase.getInstance().getReference();\r\n\r\n        mDatabase.child(\"record\").child(date).child(\"d_date\").addChildEventListener(new ChildEventListener() {\r\n            @Override\r\n            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                Data data = snapshot.getValue(Data.class);\r\n                drink_name.setText(data.getD_name());\r\n            }\r\n\r\n            @Override\r\n            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n\r\n        return view;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/waterdongdong/FragMonth.java	(revision 23bfe553c9930c3c4226960ad4e8a49dcefaaa0f)
++++ app/src/main/java/com/example/waterdongdong/FragMonth.java	(date 1604834257324)
+@@ -68,8 +68,6 @@
+         drink_name = (TextView)view.findViewById(R.id.drink_name);
+         drink_intake = (TextView) view.findViewById(R.id.drink_intake);
+ 
+-        ArrayList NoOfEmp = new ArrayList();
+-
+         List<BarEntry> entries = new ArrayList<>();
+         entries.add(new BarEntry(1f, 1250f));
+         entries.add(new BarEntry(2f, 800f));
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_1_7\" default=\"true\" project-jdk-name=\"1.8\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision 23bfe553c9930c3c4226960ad4e8a49dcefaaa0f)
++++ .idea/misc.xml	(date 1604834257307)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\r\n  <component name=\"GradleSettings\">\r\n    <option name=\"linkedExternalProjectsSettings\">\r\n      <GradleProjectSettings>\r\n        <option name=\"testRunner\" value=\"PLATFORM\" />\r\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\r\n        <option name=\"modules\">\r\n          <set>\r\n            <option value=\"$PROJECT_DIR$\" />\r\n            <option value=\"$PROJECT_DIR$/app\" />\r\n          </set>\r\n        </option>\r\n        <option name=\"resolveModulePerSourceSet\" value=\"false\" />\r\n      </GradleProjectSettings>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/gradle.xml	(revision 23bfe553c9930c3c4226960ad4e8a49dcefaaa0f)
++++ .idea/gradle.xml	(date 1604834257312)
+@@ -14,6 +14,7 @@
+           </set>
+         </option>
+         <option name="resolveModulePerSourceSet" value="false" />
++        <option name="useQualifiedModuleNames" value="true" />
+       </GradleProjectSettings>
+     </option>
+   </component>
+Index: app/src/main/res/layout/frag_month.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\">\r\n\r\n    <HorizontalScrollView\r\n        android:id=\"@+id/horizontalScrollView\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"597dp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.0\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.029\">\r\n\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\"\r\n            android:orientation=\"horizontal\">\r\n\r\n            <com.github.mikephil.charting.charts.BarChart\r\n                android:id=\"@+id/barchart\"\r\n                android:layout_width=\"600dp\"\r\n                android:layout_height=\"match_parent\"\r\n                android:background=\"@drawable/chart_background_gradient\" />\r\n        </LinearLayout>\r\n\r\n    </HorizontalScrollView>\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"416dp\"\r\n        android:layout_height=\"112dp\"\r\n        android:orientation=\"horizontal\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/horizontalScrollView\">\r\n\r\n        <TextView\r\n            android:id=\"@+id/drink_name\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"match_parent\"\r\n            android:layout_weight=\"1\"\r\n            android:background=\"#4edade\"\r\n            android:gravity=\"center_horizontal|center_vertical\"\r\n            android:textSize=\"19sp\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/drink_intake\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"match_parent\"\r\n            android:layout_weight=\"1\"\r\n            android:background=\"#4edade\"\r\n            android:gravity=\"center_horizontal|center_vertical\"\r\n            android:textSize=\"19sp\" />\r\n    </LinearLayout>\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/frag_month.xml	(revision 23bfe553c9930c3c4226960ad4e8a49dcefaaa0f)
++++ app/src/main/res/layout/frag_month.xml	(date 1604834257318)
+@@ -5,56 +5,53 @@
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+ 
+-    <HorizontalScrollView
+-        android:id="@+id/horizontalScrollView"
++
++    <LinearLayout
+         android:layout_width="match_parent"
+-        android:layout_height="597dp"
++        android:layout_height="match_parent"
++        android:orientation="vertical"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.0"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.029">
++        app:layout_constraintTop_toTopOf="parent">
+ 
+         <LinearLayout
+             android:layout_width="match_parent"
+-            android:layout_height="match_parent"
++            android:layout_height="582dp"
+             android:orientation="horizontal">
+ 
+             <com.github.mikephil.charting.charts.BarChart
+                 android:id="@+id/barchart"
+-                android:layout_width="600dp"
++                android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:background="@drawable/chart_background_gradient" />
+         </LinearLayout>
+ 
+-    </HorizontalScrollView>
+-
+-    <LinearLayout
+-        android:layout_width="416dp"
+-        android:layout_height="112dp"
+-        android:orientation="horizontal"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView">
++        <LinearLayout
++            android:id="@+id/linearLayout"
++            android:layout_width="match_parent"
++            android:layout_height="112dp"
++            android:orientation="horizontal">
+ 
+-        <TextView
+-            android:id="@+id/drink_name"
+-            android:layout_width="0dp"
+-            android:layout_height="match_parent"
+-            android:layout_weight="1"
+-            android:background="#4edade"
+-            android:gravity="center_horizontal|center_vertical"
+-            android:textSize="19sp" />
++            <TextView
++                android:id="@+id/drink_name"
++                android:layout_width="0dp"
++                android:layout_height="match_parent"
++                android:layout_weight="1"
++                android:background="#4edade"
++                android:gravity="center_horizontal|center_vertical"
++                android:textSize="19sp" />
+ 
+-        <TextView
+-            android:id="@+id/drink_intake"
+-            android:layout_width="0dp"
+-            android:layout_height="match_parent"
+-            android:layout_weight="1"
+-            android:background="#4edade"
+-            android:gravity="center_horizontal|center_vertical"
+-            android:textSize="19sp" />
++            <TextView
++                android:id="@+id/drink_intake"
++                android:layout_width="0dp"
++                android:layout_height="match_parent"
++                android:layout_weight="1"
++                android:background="#4edade"
++                android:gravity="center_horizontal|center_vertical"
++                android:textSize="19sp" />
++        </LinearLayout>
++
+     </LinearLayout>
++
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_2020-11-03__8_48__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_2020-11-03__8_48__Default_Changelist_.xml

@@ -68,8 +68,6 @@ public class FragMonth extends Fragment {
         drink_name = (TextView)view.findViewById(R.id.drink_name);
         drink_intake = (TextView) view.findViewById(R.id.drink_intake);
 
-        ArrayList NoOfEmp = new ArrayList();
-
         List<BarEntry> entries = new ArrayList<>();
         entries.add(new BarEntry(1f, 1250f));
         entries.add(new BarEntry(2f, 800f));
