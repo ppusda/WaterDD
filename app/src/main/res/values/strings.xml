@@ -6,6 +6,8 @@
     <string name="t_text1">기능 설정</string>
     <string name="text0">사용자 정보 저장</string>
     <string name="text0_content">저장한 정보를 통해 목표 음수량을 할당합니다.</string>
+    <string name="text0_1">목표치 값 설정</string>
+    <string name="text0_1_content">목표치로 설정 할 값을 지정합니다.</string>
     <string name="text1">알림 ON/OFF</string>
     <string name="text1_content">알림 기능을 키고 끕니다.</string>
     <string name="text2">알림 출력 간격</string>
