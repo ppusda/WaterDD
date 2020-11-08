@@ -157,23 +157,24 @@ public class FragDay extends Fragment {
             }
         });
 
-        readIntake();
+        //readIntake();
         return view;
     }
-    private void readIntake(){
-        mDatabase.child("record").child(date).child("d_intake").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Intake intake = dataSnapshot.getValue(Intake.class);
-                my_intake = intake.getT_intake();
-                drink_intake.setText(my_intake+"ml");
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
-    }
+//    private void readIntake(){
+//        mDatabase.child("record").child(date).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                Intake intake = dataSnapshot.getValue(Intake.class);
+//                my_intake = intake.getT_intake();
+//                drink_intake.setText(my_intake+"ml");
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                System.out.println("The read failed: " + databaseError.getCode());
+//            }
+//        });
+//    }
 
 }
