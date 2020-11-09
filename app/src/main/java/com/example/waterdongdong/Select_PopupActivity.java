@@ -31,8 +31,11 @@ import android.widget.Toast;
 import com.example.waterdongdong.Data;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -55,6 +58,8 @@ public class Select_PopupActivity extends AppCompatActivity {
     int chk_ed = 1;
 
     String date, time, weekDay;
+    int cal = 0;
+    int chk_cal = 0;
     int tot_cal;
     static int cnt = 0;
 
@@ -111,6 +116,7 @@ public class Select_PopupActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 ((TextView)adapterView.getChildAt(0)).setTextColor(Color.BLACK);
                 if(sc.getItem(position).equals("물")){
+                    cal = 0;
                     sn = ArrayAdapter.createFromResource(Select_PopupActivity.this, R.array.water, R.layout.support_simple_spinner_dropdown_item);
                     sn.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     chk_category = sc.getItem(position).toString();
@@ -128,6 +134,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                         }
                     });
                 } else if(sc.getItem(position).equals("유제품")){
+                    cal = 45;
                     sn = ArrayAdapter.createFromResource(Select_PopupActivity.this, R.array.dairy, R.layout.support_simple_spinner_dropdown_item);
                     sn.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     chk_category = sc.getItem(position).toString();
@@ -145,6 +152,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                         }
                     });
                 } else if(sc.getItem(position).equals("탄산음료")){
+                    cal = 40;
                     sn = ArrayAdapter.createFromResource(Select_PopupActivity.this, R.array.carbonated, R.layout.support_simple_spinner_dropdown_item);
                     sn.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     chk_category = sc.getItem(position).toString();
@@ -162,6 +170,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                         }
                     });
                 } else if(sc.getItem(position).equals("스포츠음료")){
+                    cal = 11;
                     sn = ArrayAdapter.createFromResource(Select_PopupActivity.this, R.array.sports, R.layout.support_simple_spinner_dropdown_item);
                     sn.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     chk_category = sc.getItem(position).toString();
@@ -179,6 +188,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                         }
                     });
                 } else if(sc.getItem(position).equals("주스")){
+                    cal = 55;
                     sn = ArrayAdapter.createFromResource(Select_PopupActivity.this, R.array.juice, R.layout.support_simple_spinner_dropdown_item);
                     sn.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     chk_category = sc.getItem(position).toString();
@@ -196,6 +206,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                         }
                     });
                 } else if(sc.getItem(position).equals("차")){
+                    cal = 1;
                     sn = ArrayAdapter.createFromResource(Select_PopupActivity.this, R.array.tea, R.layout.support_simple_spinner_dropdown_item);
                     sn.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     chk_category = sc.getItem(position).toString();
@@ -240,14 +251,18 @@ public class Select_PopupActivity extends AppCompatActivity {
                     chk_name = ed_name.getText().toString();
                 }
 
+                Intent it = getIntent();
+                it.getIntExtra("tot_cal", tot_cal);
+                chk_cal = chk_cal + (tot_cal*cal);
+
                 writeRecord(chk_category, chk_name, tot_cal, time, weekDay, cnt);
+                writeCalorie(chk_cal);
                 cnt ++;
 
                 finish();
             }
         });
     }
-
 
     private void writeRecord(String category, String name, int cal, String time, String weekDay, int cnt){
         Data data = new Data(category, name, cal, time, weekDay, cnt);
@@ -263,6 +278,23 @@ public class Select_PopupActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(getApplicationContext(), "저장을 실패했습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+    }
+
+    private void writeCalorie(int Calorie){
+        Calorie calorie = new Calorie(Calorie);
+
+        mDatabase.child("record").child(date).child("d_calorie").setValue(calorie)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
                     }
                 });
 

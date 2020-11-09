@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -55,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
     static int my_intake = 0;
 
     String date, time, weekDay;
-    int cal = 100;
     int tot_cal;
 
     private WaveHelper mWaveHelper;
@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             if(resultCode==RESULT_OK){
                 readMod();
                 readUser();
+                readIntake();
             }
         }
         if (requestCode == BluetoothState.REQUEST_CONNECT_DEVICE) { /////블루투스
@@ -157,13 +158,10 @@ public class MainActivity extends AppCompatActivity {
                 String[] array=message.split(",");
                 now_intake =  Integer.parseInt(array[1]);
 
-                if(Select_PopupActivity.cnt != 0){
-                    readIntake();
-                }
-
+                readIntake();
                 my_intake += now_intake;
                 writeIntake(my_intake);
-                tot_cal = cal * my_intake;
+                tot_cal = my_intake;
 
                 if(now_intake != 0){
                     Intent q_pop_in = new Intent(getApplicationContext(), Select_PopupActivity.class);
@@ -228,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
         readMod();
         readUser();
+        readIntake();
 
         mDatabase.child("record").child(date).child("d_date").addChildEventListener(new ChildEventListener() {
             @Override
