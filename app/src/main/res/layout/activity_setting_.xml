@@ -188,48 +188,7 @@
             android:layout_height="1dp"
             android:background="#CCFFFFFF" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="7dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/text3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text3"
-                    android:textColor="#000"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/text3_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="@string/text3_content"
-                    android:textSize="10sp"/>
-
-            </LinearLayout>
-
-            <Switch
-                android:id="@+id/washing_switch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <View
-            android:id="@+id/view3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#CCFFFFFF" />
 
         <LinearLayout
             android:id="@+id/About_beverage"
