@@ -42,9 +42,9 @@ public class FragDay extends Fragment {
     private DatabaseReference mDatabase;
     static int my_intake;
     int chart_intake,i=0;
-    List<BarEntry> entries = new ArrayList<>();
     String date;
     BarChart chart;
+    List<BarEntry> entries = new ArrayList<BarEntry>(); //차트의 값 연결 리스트
 
     public static FragDay newInstance(){
         FragDay fragDay = new FragDay();
@@ -58,28 +58,45 @@ public class FragDay extends Fragment {
         drink_name = (TextView)view.findViewById(R.id.drink_name);
         drink_intake = (TextView) view.findViewById(R.id.drink_intake);
         chart = (BarChart) view.findViewById(R.id.barchart);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        Date currentTime = Calendar.getInstance().getTime();
+
+        SimpleDateFormat dateFormat_Day = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat("dd", Locale.KOREA);
+        date = dateFormat_Day.format(currentTime);
+//        Calendar cal = Calendar.getInstance();
+//        cal.add(Calendar.DATE, -8);
+//        String txt_date = null;
 
         //chart.setScaleEnabled(false);
+        final int[] arr ={0, 2100, 2400, 1900, 2100, 2600,2100, 2000, 2200,2700};
+            mDatabase.child("record").child(date).child("d_intake").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Intake intake = dataSnapshot.getValue(Intake.class);
+                    chart_intake = intake.getT_intake();
+                    for (i=1; i<10; i++) {
+                        entries.add(new BarEntry(i,arr[i]));
+                    }
+                    entries.add(new BarEntry(10, chart_intake));
+                    BarDataSet set = new BarDataSet(entries, "시간당 음수량(ml)");
+                    BarData data = new BarData(set);
+                    data.setBarWidth(0.8f); // set custom bar width
+                    chart.setData(data);
+                    set.setDrawValues(false); // 차트 위의 값 삭제
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            });
 
 
 
-//        entries.add(new BarEntry(0f, 0f));
-//        entries.add(new BarEntry(1, 1250));
-//        entries.add(new BarEntry(2f, 2200f));
-//        entries.add(new BarEntry(3f, 1500f));
-//        entries.add(new BarEntry(4f, 1300f));
-//        entries.add(new BarEntry(5f, 1300f));
-//        entries.add(new BarEntry(6f, 1800f));
-//        entries.add(new BarEntry(7f, 1700f));
-//        entries.add(new BarEntry(6f, 1900f));
-
-//        BarDataSet set = new BarDataSet(entries, "시간당 음수량(ml)");
-
- //       BarData data = new BarData(set);
-//        data.setBarWidth(0.8f); // set custom bar width
-//        chart.setData(data);
         chart.setFitBars(true); // make the x-axis fit exactly all bars
-//        set.setDrawValues(false); // 차트 위의 값 삭제
+
         chart.setExtraTopOffset(20f); //차트와 위의 간격
 //        data.setBarWidth(0.7f);
 
@@ -93,7 +110,6 @@ public class FragDay extends Fragment {
 
         final ArrayList<String> xLabel = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("dd", Locale.KOREA);
         calendar.set(Calendar.DAY_OF_MONTH,0);
         xLabel.add("");
         for(int i=0;i<=29;i++){
@@ -115,17 +131,11 @@ public class FragDay extends Fragment {
         xAxis.setGranularity(1f);
 
         YAxis yAxis = chart.getAxisLeft();
-        yAxis.setAxisMaxValue(2400);
+        yAxis.setAxisMaxValue(2800);
         yAxis.setAxisMinValue(0);
-        yAxis.setLabelCount(6);
+        yAxis.setLabelCount(7);
         chart.getAxisRight().setEnabled(false);
 
-        Date currentTime = Calendar.getInstance().getTime();
-
-        SimpleDateFormat dateFormat_Day = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
-        date = dateFormat_Day.format(currentTime);
-
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         mDatabase.child("record").child(date).child("d_date").addChildEventListener(new ChildEventListener() {
             @Override
@@ -158,7 +168,6 @@ public class FragDay extends Fragment {
         });
 
         readIntake();
-        readData();
         return view;
     }
 
@@ -177,41 +186,6 @@ public class FragDay extends Fragment {
                 System.out.println("The read failed: " + databaseError.getCode());
             }
         });
-    }
-
-        private void readData () {
-            for (i=0; i<9; i++) {
-            Calendar cal = Calendar.getInstance(); // 캘린더 객체 생성
-            cal.add(Calendar.DATE, -8+i); //오늘 날짜(Date)에서 8일전으로 날짜 할당
-            Date date = cal.getTime();
-            SimpleDateFormat dateFormat_Day = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
-            String txtDate = dateFormat_Day.format(date); //위의 simpel 포맷으로 날짜 형식 할당
-
-                mDatabase.child("record").child(txtDate).child("d_intake").addValueEventListener(new ValueEventListener() {
-                    @Override //데이터베이스 내 txtDate와 일치하는 날짜의 d_intake 값을 불러 오는 listenr
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Intake intake = dataSnapshot.getValue(Intake.class); //intake 클래스에서 음수값 연결
-                        chart_intake = intake.getT_intake(); //char_intake는 int형으로 intake 클래스에서 getT_intake를 이용하여 값을 가져옴
-                        List<BarEntry> entries = new ArrayList<BarEntry>(); //차트의 값 연결 리스트
-                        for (i = 1; i <= 8; i++) {
-                            entries.add(new BarEntry(i, chart_intake)); //add로 값을 연결 i는 순서이고 chart_intake는 받아온 음수량
-                        }
-
-                        BarDataSet set = new BarDataSet(entries, "시간당 음수량(ml)");
-                        BarData data = new BarData(set);
-                        data.setBarWidth(0.8f); // set custom bar width
-                        chart.setData(data);
-                        set.setDrawValues(false); // 차트 위의 값 삭제
-                        data.setBarWidth(0.7f);
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        System.out.println("The read failed: " + databaseError.getCode());
-                    }
-                });
-                cal.add(Calendar.DATE, -8+i);
-            }
-
     }
 
 }//fragment
