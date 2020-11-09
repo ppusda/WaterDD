@@ -16,7 +16,7 @@ import androidx.appcompat.widget.SwitchCompat;
 
 public class Setting_Activity extends AppCompatActivity {
 
-    LinearLayout About_b, About_app, About_user, About_A_interval;
+    LinearLayout About_b, About_app, About_user, About_A_interval, About_achieve;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     Switch sw_Alarm;
 
@@ -31,6 +31,8 @@ public class Setting_Activity extends AppCompatActivity {
         About_user = findViewById(R.id.Save_user);
         About_A_interval = findViewById(R.id.alarm_interval);
         sw_Alarm = findViewById(R.id.alarm_switch);
+
+        About_achieve = findViewById(R.id.Save_achieve);
 
         About_b.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -55,6 +57,18 @@ public class Setting_Activity extends AppCompatActivity {
                 startActivityForResult(it_user_info, 1);
             }
         });
+
+
+
+        About_achieve.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent it_achieve = new Intent(getApplicationContext(), achieve_select.class);
+                startActivityForResult(it_achieve,1);
+            }
+        });
+
+
 
         sw_Alarm.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

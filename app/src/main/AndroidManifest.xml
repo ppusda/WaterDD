@@ -43,6 +43,10 @@
             android:name=".App_Info"
             android:screenOrientation="fullSensor"
             android:theme="@style/popupTheme" />
+        <activity android:name=".achieve_select"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/popupTheme"
+            />
         <activity android:name=".Setting_Activity" />
         <activity android:name=".Database_main" />
         <activity android:name=".MainActivity">
