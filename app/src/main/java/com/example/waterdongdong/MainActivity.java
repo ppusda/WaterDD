@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
     String chk_mod;
     float goal_intake = 0;
-    int bf_intake = 0, now_intake = 0;
+    int bf_intake = 0;
+    static int now_intake = 0;
     static int my_intake = 0;
 
     String date, time, weekDay;
@@ -161,11 +162,10 @@ public class MainActivity extends AppCompatActivity {
                 readIntake();
                 my_intake += now_intake;
                 writeIntake(my_intake);
-                tot_cal = my_intake;
+                //tot_cal = now_intake;
 
                 if(now_intake != 0){
                     Intent q_pop_in = new Intent(getApplicationContext(), Select_PopupActivity.class);
-                    q_pop_in.putExtra("tot_cal", tot_cal);
                     startActivityForResult(q_pop_in, 1);
                 }// 만약 전의 물의 양이 0 이고 현재의 양이 0이 아니라면 (= 물이 들어왔을 때) 질문화면 팝업 창을 띄워준다.
 
@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         mDatabase.child("record").child(date).child("d_date").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Log.d("MainActivity", "onChildAdded : " + snapshot.getValue());
+                //Log.d("MainActivity", "onChildAdded : " + snapshot.getValue());
 
                 Data data = snapshot.getValue(Data.class);
                 txt_name.setText(data.getD_name());

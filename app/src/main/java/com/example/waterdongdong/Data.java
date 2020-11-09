@@ -4,7 +4,6 @@ public class Data {
 
     public String category;
     public String d_name;
-    public int cal;
     public String time;
     public String weekDay;
     public int cnt;
@@ -13,10 +12,9 @@ public class Data {
 
     }
 
-    public Data(String category, String d_name, int cal, String time, String weekDay, int cnt) {
+    public Data(String category, String d_name, String time, String weekDay, int cnt) {
         this.category = category;
         this.d_name = d_name;
-        this.cal = cal;
         this.time = time;
         this.weekDay = weekDay;
         this.cnt = cnt;
@@ -36,14 +34,6 @@ public class Data {
 
     public void setD_name(String d_name) {
         this.d_name = d_name;
-    }
-
-    public int getCal() {
-        return cal;
-    }
-
-    public void setCal(int cal) {
-        this.cal = cal;
     }
 
     public String getTime() {

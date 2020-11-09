@@ -60,7 +60,6 @@ public class Select_PopupActivity extends AppCompatActivity {
     String date, time, weekDay;
     int cal = 0;
     int chk_cal = 0;
-    int tot_cal;
     static int cnt = 0;
 
     private DatabaseReference mDatabase;
@@ -251,11 +250,10 @@ public class Select_PopupActivity extends AppCompatActivity {
                     chk_name = ed_name.getText().toString();
                 }
 
-                Intent it = getIntent();
-                it.getIntExtra("tot_cal", tot_cal);
-                chk_cal = chk_cal + (tot_cal*cal);
+                chk_cal = chk_cal + (MainActivity.now_intake*cal);
+                //Log.d("Select_PopupActivity", "Success : " + chk_cal);
 
-                writeRecord(chk_category, chk_name, tot_cal, time, weekDay, cnt);
+                writeRecord(chk_category, chk_name, time, weekDay, cnt);
                 writeCalorie(chk_cal);
                 cnt ++;
 
@@ -264,8 +262,8 @@ public class Select_PopupActivity extends AppCompatActivity {
         });
     }
 
-    private void writeRecord(String category, String name, int cal, String time, String weekDay, int cnt){
-        Data data = new Data(category, name, cal, time, weekDay, cnt);
+    private void writeRecord(String category, String name, String time, String weekDay, int cnt){
+        Data data = new Data(category, name, time, weekDay, cnt);
 
         mDatabase.child("record").child(date).child("d_date").push().setValue(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
