@@ -168,6 +168,13 @@ public class MainActivity extends AppCompatActivity {
                 if(now_intake != 0){
                     Intent q_pop_in = new Intent(getApplicationContext(), Select_PopupActivity.class);
                     startActivityForResult(q_pop_in, 1);
+                }// 만약 전의 물의 양이 0 이고 현재의 양이 0이 아니라면 (= 물이 들어왔을 때) 질문화면 팝업 창을 띄워준다.
+
+                if(chk_mod.equals("환절기")){
+                    float ccl = goal_intake/10;
+                    goal_intake += ccl;
+                }else if(chk_mod.equals("운동")){
+
                 }
 
                 if (my_intake == 0) {
