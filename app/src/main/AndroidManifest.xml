@@ -13,6 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <receiver
             android:name=".DateReceiver"
             android:enabled="true"
@@ -21,25 +22,27 @@
                 <action android:name="android.intent.action.DATE_CHANGED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".AlarmActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/popupTheme" />
         <activity
             android:name=".SelectModActivity"
             android:screenOrientation="fullSensor"
-            android:theme="@style/popupTheme">
-        </activity>
+            android:theme="@style/popupTheme" />
         <activity
-        android:name=".Select_PopupActivity"
-        android:screenOrientation="fullSensor"
-        android:theme="@style/popupTheme">
-        </activity>
+            android:name=".Select_PopupActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/popupTheme" />
         <activity
-        android:name=".User_Info_Calculate"
-        android:screenOrientation="fullSensor"
-        android:theme="@style/popupTheme">
-        </activity>
+            android:name=".User_Info_Calculate"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/popupTheme" />
         <activity
             android:name=".App_Info"
             android:screenOrientation="fullSensor"
-            android:theme="@style/popupTheme"/>
+            android:theme="@style/popupTheme" />
         <activity android:name=".Setting_Activity" />
         <activity android:name=".Database_main" />
         <activity android:name=".MainActivity">

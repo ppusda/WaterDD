@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==1){
             if(resultCode==RESULT_OK){
-                //readData();
                 readMod();
                 readUser();
             }
@@ -159,24 +158,18 @@ public class MainActivity extends AppCompatActivity {
                 now_intake =  Integer.parseInt(array[1]);
 
                 if(Select_PopupActivity.cnt != 0){
-                    readIntake(); // 값을 읽어와서 동기화
-                }// 아니면 DB에서 값을 읽어와서 0이상 즉 1부터의 토탈 값을 가져와 동기화를 하면 될 것 같다.
+                    readIntake();
+                }
 
-                if(bf_intake == 0 || now_intake != 0){
+                my_intake += now_intake;
+                writeIntake(my_intake);
+                tot_cal = cal * my_intake;
+
+                if(now_intake != 0){
                     Intent q_pop_in = new Intent(getApplicationContext(), Select_PopupActivity.class);
                     q_pop_in.putExtra("tot_cal", tot_cal);
                     startActivityForResult(q_pop_in, 1);
                 }// 만약 전의 물의 양이 0 이고 현재의 양이 0이 아니라면 (= 물이 들어왔을 때) 질문화면 팝업 창을 띄워준다.
-
-                if(now_intake != 0){
-                    if(bf_intake != 0){
-                        if(bf_intake > now_intake){
-                            my_intake += (bf_intake - now_intake);
-                            writeIntake(my_intake);
-                        }
-                        tot_cal = cal * my_intake;
-                    }
-                } // 현재 물의 양과 전의 물의 양을 비교하여 내가 현재 마신 물의 양을 구한다.
 
                 if (my_intake == 0) {
                     Waterlevel = 0.0f;
@@ -239,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
         mDatabase.child("record").child(date).child("d_date").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                // Log.d("MainActivity", "onChildAdded : " + snapshot.getValue());
+                Log.d("MainActivity", "onChildAdded : " + snapshot.getValue());
 
                 Data data = snapshot.getValue(Data.class);
                 txt_name.setText(data.getD_name());
