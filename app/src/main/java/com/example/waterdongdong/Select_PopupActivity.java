@@ -58,8 +58,7 @@ public class Select_PopupActivity extends AppCompatActivity {
     int chk_ed = 1;
 
     String date, time, weekDay;
-    int cal = 0;
-    int chk_cal = 0;
+    static int cal = 0;
     static int cnt = 0;
 
     private DatabaseReference mDatabase;
@@ -250,11 +249,7 @@ public class Select_PopupActivity extends AppCompatActivity {
                     chk_name = ed_name.getText().toString();
                 }
 
-                chk_cal = chk_cal + (MainActivity.now_intake*cal);
-                //Log.d("Select_PopupActivity", "Success : " + chk_cal);
-
-                writeRecord(chk_category, chk_name, time, weekDay, cnt);
-                writeCalorie(chk_cal);
+                writeRecord(chk_category, chk_name, cal, time, weekDay, cnt);
                 cnt ++;
 
                 finish();
@@ -262,8 +257,8 @@ public class Select_PopupActivity extends AppCompatActivity {
         });
     }
 
-    private void writeRecord(String category, String name, String time, String weekDay, int cnt){
-        Data data = new Data(category, name, time, weekDay, cnt);
+    private void writeRecord(String category, String name, int cal, String time, String weekDay, int cnt){
+        Data data = new Data(category, name, cal, time, weekDay, cnt);
 
         mDatabase.child("record").child(date).child("d_date").push().setValue(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -276,23 +271,6 @@ public class Select_PopupActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(getApplicationContext(), "저장을 실패했습니다.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-    }
-
-    private void writeCalorie(int Calorie){
-        Calorie calorie = new Calorie(Calorie);
-
-        mDatabase.child("record").child(date).child("d_calorie").setValue(calorie)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
                     }
                 });
 

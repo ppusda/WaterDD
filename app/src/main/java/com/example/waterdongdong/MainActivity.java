@@ -162,7 +162,8 @@ public class MainActivity extends AppCompatActivity {
                 readIntake();
                 my_intake += now_intake;
                 writeIntake(my_intake);
-                //tot_cal = now_intake;
+                tot_cal = now_intake * Select_PopupActivity.cal;
+                writeCalorie(tot_cal);
 
                 if(now_intake != 0){
                     Intent q_pop_in = new Intent(getApplicationContext(), Select_PopupActivity.class);
@@ -372,6 +373,23 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("The read failed: " + databaseError.getCode());
             }
         });
+    }
+
+    private void writeCalorie(int Calorie){
+        Calorie calorie = new Calorie(Calorie);
+
+        mDatabase.child("record").child(date).child("d_calorie").setValue(calorie)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    }
+                });
+
     }
 
     @Override
