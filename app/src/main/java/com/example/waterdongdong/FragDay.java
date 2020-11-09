@@ -41,7 +41,10 @@ public class FragDay extends Fragment {
     //String[] xAxisLables = new String[]{"1","2", "3", "4" ...};
     private DatabaseReference mDatabase;
     static int my_intake;
+    int chart_intake,i=0;
+    List<BarEntry> entries = new ArrayList<>();
     String date;
+    BarChart chart;
 
     public static FragDay newInstance(){
         FragDay fragDay = new FragDay();
@@ -52,33 +55,33 @@ public class FragDay extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.frag_day,container,false);
-        BarChart chart = (BarChart) view.findViewById(R.id.barchart);
         drink_name = (TextView)view.findViewById(R.id.drink_name);
         drink_intake = (TextView) view.findViewById(R.id.drink_intake);
+        chart = (BarChart) view.findViewById(R.id.barchart);
 
         //chart.setScaleEnabled(false);
-        ArrayList NoOfEmp = new ArrayList();
 
-        List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0f, 0f));
-        entries.add(new BarEntry(1f, 1250f));
-        entries.add(new BarEntry(2f, 2200f));
-        entries.add(new BarEntry(3f, 1500f));
-        entries.add(new BarEntry(4f, 1300f));
-        entries.add(new BarEntry(5f, 1300f));
-        entries.add(new BarEntry(6f, 1800f));
-        entries.add(new BarEntry(7f, 1700f));
-        entries.add(new BarEntry(6f, 1900f));
 
-        BarDataSet set = new BarDataSet(entries, "시간당 음수량(ml)");
 
-        BarData data = new BarData(set);
-        data.setBarWidth(0.8f); // set custom bar width
-        chart.setData(data);
+//        entries.add(new BarEntry(0f, 0f));
+//        entries.add(new BarEntry(1, 1250));
+//        entries.add(new BarEntry(2f, 2200f));
+//        entries.add(new BarEntry(3f, 1500f));
+//        entries.add(new BarEntry(4f, 1300f));
+//        entries.add(new BarEntry(5f, 1300f));
+//        entries.add(new BarEntry(6f, 1800f));
+//        entries.add(new BarEntry(7f, 1700f));
+//        entries.add(new BarEntry(6f, 1900f));
+
+//        BarDataSet set = new BarDataSet(entries, "시간당 음수량(ml)");
+
+ //       BarData data = new BarData(set);
+//        data.setBarWidth(0.8f); // set custom bar width
+//        chart.setData(data);
         chart.setFitBars(true); // make the x-axis fit exactly all bars
-        set.setDrawValues(false); // 차트 위의 값 삭제
+//        set.setDrawValues(false); // 차트 위의 값 삭제
         chart.setExtraTopOffset(20f); //차트와 위의 간격
-        data.setBarWidth(0.7f);
+//        data.setBarWidth(0.7f);
 
         XAxis x = chart.getXAxis();
         x.setAxisMinimum(0);
@@ -131,10 +134,7 @@ public class FragDay extends Fragment {
 
                 Data data = snapshot.getValue(Data.class);
                 drink_name.setText(data.getD_name());
-            } // Log로 값을 확인해 보았을 때 snapshot.getValue는 값들을 모두 가져온다는 걸 알 수 있다.
-            // 이를 전체 모두 표현하려면 ArrayList에 담아서 해결해야할 듯 하다.
-            // ** cnt에 대해서 - 위에 Run버튼을 누르면 앱이 새로 install 되는데 그 때마다 값이 리셋 된다.
-            // 012345가 쌓이다가도 다시 디버깅하려고 누르면 0이 되기에 참고하기 바람.
+            }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -157,24 +157,61 @@ public class FragDay extends Fragment {
             }
         });
 
-        //readIntake();
+        readIntake();
+        readData();
         return view;
     }
 
-//    private void readIntake(){
-//        mDatabase.child("record").child(date).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                Intake intake = dataSnapshot.getValue(Intake.class);
-//                my_intake = intake.getT_intake();
-//                drink_intake.setText(my_intake+"ml");
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                System.out.println("The read failed: " + databaseError.getCode());
-//            }
-//        });
-//    }
 
-}
+    private void readIntake(){
+        mDatabase.child("record").child(date).child("d_intake").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Intake intake = dataSnapshot.getValue(Intake.class);
+                my_intake = intake.getT_intake();
+                drink_intake.setText(my_intake+"ml");
+           }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+    }
+
+        private void readData () {
+            for (i=0; i<9; i++) {
+            Calendar cal = Calendar.getInstance(); // 캘린더 객체 생성
+            cal.add(Calendar.DATE, -8+i); //오늘 날짜(Date)에서 8일전으로 날짜 할당
+            Date date = cal.getTime();
+            SimpleDateFormat dateFormat_Day = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+            String txtDate = dateFormat_Day.format(date); //위의 simpel 포맷으로 날짜 형식 할당
+
+                mDatabase.child("record").child(txtDate).child("d_intake").addValueEventListener(new ValueEventListener() {
+                    @Override //데이터베이스 내 txtDate와 일치하는 날짜의 d_intake 값을 불러 오는 listenr
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Intake intake = dataSnapshot.getValue(Intake.class); //intake 클래스에서 음수값 연결
+                        chart_intake = intake.getT_intake(); //char_intake는 int형으로 intake 클래스에서 getT_intake를 이용하여 값을 가져옴
+                        List<BarEntry> entries = new ArrayList<BarEntry>(); //차트의 값 연결 리스트
+                        for (i = 1; i <= 8; i++) {
+                            entries.add(new BarEntry(i, chart_intake)); //add로 값을 연결 i는 순서이고 chart_intake는 받아온 음수량
+                        }
+
+                        BarDataSet set = new BarDataSet(entries, "시간당 음수량(ml)");
+                        BarData data = new BarData(set);
+                        data.setBarWidth(0.8f); // set custom bar width
+                        chart.setData(data);
+                        set.setDrawValues(false); // 차트 위의 값 삭제
+                        data.setBarWidth(0.7f);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        System.out.println("The read failed: " + databaseError.getCode());
+                    }
+                });
+                cal.add(Calendar.DATE, -8+i);
+            }
+
+    }
+
+}//fragment
